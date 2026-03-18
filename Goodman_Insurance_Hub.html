@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Hub | Meridian</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plum:#2A2438;--plum-l:#342C47;--plum-p:#9B93B3;
+  --lilac:#6B5F8A;--lilac-p:#3D3554;
+  --oat:#1A1726;--linen:#222033;--warm:#2A2640;
+  --card:#252236;--border:#332E4A;
+  --charcoal:#E8E4F0;--mid:#B0A8C8;--muted:#6E6888;
+  --sage:#3A6B42;--sage-l:#A8D4B0;
+  --rose:#6B2A2A;--rose-l:#F0B0B0;
+  --amber:#5A4A1A;--amber-l:#E8D090;
+  --steel:#1A3A5A;--steel-l:#90C0E8;
+  --teal:#1A5A5A;--teal-l:#90D8D8;
+  --white:#F8F6FF;
+  --sh:0 2px 16px rgba(0,0,0,.3);
+  --sh-lg:0 8px 40px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--oat);color:var(--charcoal);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--plum);padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;z-index:100;box-shadow:var(--sh-lg);flex-shrink:0;gap:12px}
+.tb-brand{font-family:'DM Serif Display',serif;color:var(--white);font-size:16px;white-space:nowrap}
+.tb-brand span{color:var(--plum-p);font-family:'DM Sans',sans-serif;font-weight:300;font-size:13px}
+
+/* ── DASHBOARD STRIP ── */
+.dash-strip{background:var(--linen);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;gap:12px;flex-shrink:0;align-items:center;overflow-x:auto}
+.ds-card{background:var(--card);border-radius:8px;padding:6px 14px;display:flex;align-items:center;gap:8px;white-space:nowrap;cursor:pointer;transition:all .15s;border:1px solid var(--border)}
+.ds-card:hover{border-color:var(--plum-p)}
+.ds-num{font-size:18px;font-weight:600;line-height:1}
+.ds-label{font-size:10px;color:var(--mid);letter-spacing:.5px;text-transform:uppercase}
+.ds-red .ds-num{color:var(--rose-l)}
+.ds-amber .ds-num{color:var(--amber-l)}
+.ds-green .ds-num{color:var(--sage-l)}
+.ds-blue .ds-num{color:var(--steel-l)}
+.ds-teal .ds-num{color:var(--teal-l)}
+.ds-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.search-bar{flex:1;max-width:260px;margin-left:auto}
+.search-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 14px 5px 32px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--charcoal);outline:none;transition:border .15s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236E6888' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center}
+.search-input:focus{border-color:var(--plum-p)}
+.search-input::placeholder{color:var(--muted)}
+.search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--sh-lg);z-index:500;max-height:300px;overflow-y:auto;display:none}
+.search-results.open{display:block}
+.sr-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-size:12px;transition:background .1s}
+.sr-item:hover{background:var(--warm)}
+.sr-item:last-child{border-bottom:none}
+.sr-type{font-size:10px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── NAV ── */
+.tb-nav{display:flex;gap:2px;flex-shrink:0}
+.nb{background:none;border:none;color:var(--plum-p);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:5px 11px;border-radius:14px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.nb:hover{background:rgba(155,147,179,.12);color:var(--white)}
+.nb.active{background:var(--lilac);color:var(--white)}
+.nb-lists{border:1px solid var(--border) !important;color:var(--mid) !important}
+.nb-lists:hover{border-color:var(--plum-p) !important;color:var(--plum-p) !important}
+
+/* ── LAYOUT ── */
+.main{display:flex;flex:1;overflow:hidden}
+.lp{width:300px;min-width:300px;background:var(--linen);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.rp{flex:1;overflow-y:auto;padding:20px 24px;position:relative}
+
+/* ── LEFT PANEL ── */
+.sec-hdr{padding:10px 16px 8px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.lp-badge{background:var(--lilac);color:var(--white);font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px}
+.lp-badge-red{background:var(--rose)}
+.lp-addbtn{background:none;border:1px solid var(--border);color:var(--muted);font-size:10px;padding:1px 7px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .1s}
+.lp-addbtn:hover{border-color:var(--plum-p);color:var(--plum-p)}
+
+/* TODAY */
+.today-sec{flex:0 0 auto;max-height:50%;overflow-y:auto}
+.ti{padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:8px;transition:background .1s}
+.ti:hover{background:var(--warm)}
+.chk{width:16px;height:16px;min-width:16px;border:2px solid var(--lilac);border-radius:4px;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0}
+.chk.on{background:var(--sage);border-color:var(--sage)}
+.chk.on::after{content:'✓';font-size:9px;color:var(--sage-l);font-weight:700}
+.tt{font-size:12.5px;line-height:1.4;flex:1}
+.tt.done{text-decoration:line-through;color:var(--muted)}
+.tmeta{font-size:10px;color:var(--muted);margin-top:2px;display:flex;gap:5px;flex-wrap:wrap}
+
+/* TAGS */
+.tag{display:inline-block;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600}
+.t-br{background:var(--steel);color:var(--steel-l)}
+.t-oc{background:var(--lilac-p);color:var(--plum-p)}
+.t-aq{background:var(--amber);color:var(--amber-l)}
+.t-ad{background:var(--warm);color:var(--mid)}
+.t-co{background:var(--rose);color:var(--rose-l)}
+.t-ge{background:var(--warm);color:var(--mid)}
+.t-hi{background:var(--rose);color:var(--rose-l)}
+.t-me{background:var(--amber);color:var(--amber-l)}
+.t-lo{background:var(--warm);color:var(--muted)}
+.t-re{background:var(--teal);color:var(--teal-l)}
+
+/* INBOX */
+.inbox-sec{flex:1;overflow-y:auto;border-top:2px solid var(--border);min-height:0}
+.ii{padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:7px;transition:background .1s}
+.ii:hover{background:var(--warm)}
+.idot{width:6px;height:6px;min-width:6px;border-radius:50%;background:var(--plum-p);margin-top:5px}
+.itext{font-size:12px;flex:1;line-height:1.4;color:var(--charcoal)}
+.itime{font-size:10px;color:var(--muted);margin-top:1px}
+.ibtns{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+.ibtn{background:none;border:1px solid var(--border);color:var(--muted);font-size:10px;padding:2px 6px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all .1s;font-family:'DM Sans',sans-serif}
+.ibtn:hover{border-color:var(--plum-p);color:var(--plum-p)}
+.ibtn.red{border-color:var(--rose);color:var(--rose-l)}
+
+/* QUICK ADD */
+.qa{padding:9px 12px;background:var(--linen);border-top:1px solid var(--border);display:flex;gap:5px;flex-shrink:0}
+.qi{flex:1;border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:12px;background:var(--oat);outline:none;color:var(--charcoal);transition:border .15s}
+.qi:focus{border-color:var(--plum-p)}
+.qi::placeholder{color:var(--muted)}
+.qadd{background:var(--lilac);color:#F8F6FF;border:none;border-radius:7px;padding:6px 11px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
+.qphoto{background:var(--warm);border:1px solid var(--border);border-radius:7px;padding:6px 8px;cursor:pointer;font-size:13px}
+
+/* ── VIEWS ── */
+.view{display:none}.view.active{display:block}
+.vt{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);margin-bottom:2px}
+.vs{font-size:12px;color:var(--muted);margin-bottom:18px}
+
+/* ── BUTTONS ── */
+.btn{background:var(--lilac);color:#F8F6FF;border:none;border-radius:7px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:hover{opacity:.85}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--mid)}
+.btn-outline:hover{border-color:var(--plum-p);color:var(--plum-p)}
+.btn-danger{background:var(--rose);color:var(--rose-l)}
+.btn-green{background:var(--sage);color:var(--sage-l)}
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+
+/* ── FILTER BAR ── */
+.fsel{border:1px solid var(--border);border-radius:7px;padding:5px 9px;font-family:'DM Sans',sans-serif;font-size:11.5px;background:var(--card);color:var(--charcoal);outline:none;cursor:pointer}
+.fsel:focus{border-color:var(--plum-p)}
+
+/* ── LOG TABLE ── */
+.lt{width:100%;border-collapse:collapse;table-layout:auto}
+.lt th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);padding:7px 10px;border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--oat);z-index:10}
+.lt td{padding:8px 10px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;word-wrap:break-word;white-space:normal}
+.lr{cursor:pointer;transition:background .1s}
+.lr:hover{background:var(--warm)}
+.lr.overdue{border-left:3px solid var(--rose-l)}
+.lr.cl{opacity:.4}
+.lr.cl td{text-decoration:line-through}
+.lr.cl:hover{opacity:.6}
+
+/* BADGES */
+.ab{display:inline-block;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:500}
+.a-int{background:var(--steel);color:var(--steel-l)}
+.a-mar{background:var(--lilac-p);color:var(--plum-p)}
+.a-ext{background:var(--amber);color:var(--amber-l)}
+.a-oth{background:var(--warm);color:var(--mid)}
+.s-op{color:var(--plum-p);font-weight:600;font-size:11px}
+.s-cl{color:var(--sage-l);font-size:11px}
+.s-ho{color:var(--amber-l);font-size:11px}
+.p-hi{color:var(--rose-l);font-weight:700;font-size:11px}
+.p-me{color:var(--amber-l);font-size:11px}
+.p-lo{color:var(--muted);font-size:11px}
+.overdue-badge{background:var(--rose);color:var(--rose-l);font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px}
+
+/* ── CARDS ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border-radius:10px;padding:16px;box-shadow:var(--sh);cursor:pointer;transition:all .15s;border:1px solid var(--border);border-left:4px solid var(--lilac)}
+.card:hover{box-shadow:var(--sh-lg);transform:translateY(-1px);border-color:var(--plum-p)}
+.card.c-act{border-left-color:var(--sage-l)}
+.card.c-pip{border-left-color:var(--plum-p)}
+.card.c-trk{border-left-color:var(--steel-l)}
+.card.c-pro{border-left-color:var(--amber-l)}
+.card.c-bnd{border-left-color:var(--teal-l)}
+.cn{font-weight:600;font-size:13px;margin-bottom:2px;color:var(--white)}
+.cl2{font-size:11px;color:var(--muted);margin-bottom:8px}
+.cs{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;margin-bottom:8px}
+.cs-act{background:var(--sage);color:var(--sage-l)}
+.cs-pip{background:var(--lilac-p);color:var(--plum-p)}
+.cs-trk{background:var(--steel);color:var(--steel-l)}
+.cs-pro{background:var(--amber);color:var(--amber-l)}
+.cs-bnd{background:var(--teal);color:var(--teal-l)}
+.cs-hld{background:var(--rose);color:var(--rose-l)}
+.cd{display:flex;flex-direction:column;gap:3px}
+.cd-r{display:flex;justify-content:space-between;font-size:11px;gap:8px}
+.cd-l{color:var(--muted);flex-shrink:0}.cd-v{font-weight:500;color:var(--charcoal);text-align:right}
+.ca{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--rose-l)}
+.ca.w{color:var(--steel-l)}.ca.n{color:var(--sage-l)}
+
+/* ── BR TABLE VIEW ── */
+.br-table-wrap{overflow-x:auto}
+.brt{width:100%;border-collapse:collapse;min-width:900px}
+.brt th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--border);white-space:nowrap;background:var(--oat);position:sticky;top:0;z-index:10;cursor:pointer}
+.brt th:hover{color:var(--plum-p)}
+.brt th .sort-icon{margin-left:4px;opacity:.4}
+.brt th.sorted .sort-icon{opacity:1;color:var(--plum-p)}
+.brt td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.brt tr{cursor:pointer;transition:background .1s}
+.brt tr:hover{background:var(--warm)}
+.tpc-val{font-weight:600;color:var(--teal-l)}
+.prem-val{color:var(--sage-l)}
+
+/* ── DETAIL ── */
+.detail-wrap{max-width:900px}
+.dbk{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);cursor:pointer;margin-bottom:14px;padding:3px 0;transition:color .1s}
+.dbk:hover{color:var(--plum-p)}
+.dhdr{background:var(--card);border-radius:10px;padding:18px 22px;margin-bottom:14px;border:1px solid var(--border)}
+.dname{font-family:'DM Serif Display',serif;font-size:22px;color:var(--white);margin-bottom:3px}
+.dmeta{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.dkv{font-size:12px;color:var(--mid)}.dkv b{color:var(--charcoal)}
+.dst{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:18px;display:flex;align-items:center;gap:8px}
+.dst-line{flex:1;height:1px;background:var(--border)}
+
+/* PROPERTY DETAIL GRID */
+.prop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px}
+.prop-field{background:var(--oat);border-radius:8px;padding:12px 14px;border:1px solid var(--border)}
+.prop-label{font-size:10px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.prop-value{font-size:14px;font-weight:600;color:var(--white)}
+.prop-value.highlight{color:var(--teal-l)}
+.prop-value.prem{color:var(--sage-l)}
+
+.dlr{background:var(--card);border-radius:7px;padding:10px 14px;margin-bottom:6px;border:1px solid var(--border);cursor:pointer;transition:background .1s}
+.dlr:hover{background:var(--warm)}
+.dld{font-size:10px;color:var(--muted);margin-bottom:3px;display:flex;gap:8px;flex-wrap:wrap}
+.dlw{margin-bottom:3px;font-size:12.5px}
+.dln{color:var(--mid);font-style:italic;font-size:11px}
+
+/* ── NOTES ── */
+.note-card{background:var(--card);border-radius:10px;padding:14px 18px;box-shadow:var(--sh);margin-bottom:10px;cursor:pointer;transition:all .15s;border:1px solid var(--border);border-left:3px solid var(--lilac)}
+.note-card:hover{box-shadow:var(--sh-lg);border-color:var(--plum-p)}
+.note-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px;gap:10px}
+.note-title{font-weight:600;font-size:13px;color:var(--white)}
+.note-meta{font-size:10px;color:var(--muted);white-space:nowrap}
+.note-tags{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap}
+.note-body{font-size:12px;line-height:1.5;color:var(--mid);max-height:60px;overflow:hidden;position:relative}
+.note-body::after{content:'';position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(transparent,var(--card))}
+.note-full{font-size:13px;line-height:1.8;color:var(--charcoal);white-space:pre-wrap;background:var(--warm);border-radius:8px;padding:14px;margin-top:10px}
+.note-search{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--charcoal);outline:none;width:200px}
+.note-search:focus{border-color:var(--plum-p)}
+.note-search::placeholder{color:var(--muted)}
+
+/* ── RENEWALS ── */
+.rn-table{width:100%;border-collapse:collapse}
+.rn-table th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);padding:7px 10px;border-bottom:2px solid var(--border);white-space:nowrap}
+.rn-table td{padding:9px 10px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.rn-row{cursor:pointer;transition:background .1s}
+.rn-row:hover{background:var(--warm)}
+.days-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.days-red{background:var(--rose);color:var(--rose-l)}
+.days-amber{background:var(--amber);color:var(--amber-l)}
+.days-green{background:var(--sage);color:var(--sage-l)}
+.days-blue{background:var(--steel);color:var(--steel-l)}
+
+/* ── MODALS ── */
+.mo{display:none;position:fixed;inset:0;background:rgba(10,8,20,.7);z-index:200;align-items:center;justify-content:center}
+.mo.open{display:flex}
+.md{background:var(--linen);border:1px solid var(--border);border-radius:14px;padding:24px;width:580px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:var(--sh-lg)}
+.md-lg{width:680px}
+.md-xl{width:800px}
+.mt{font-family:'DM Serif Display',serif;font-size:18px;color:var(--white);margin-bottom:16px}
+.fr{margin-bottom:11px}
+.fl{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--mid);margin-bottom:4px;display:block}
+.fi,.fse,.fta{width:100%;border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--charcoal);background:var(--oat);outline:none;transition:border .15s}
+.fi:focus,.fse:focus,.fta:focus{border-color:var(--plum-p);background:var(--warm)}
+.fta{min-height:90px;resize:vertical}
+.fta-lg{min-height:160px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:11px}
+.ma{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+.section-divider{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:10px 0 6px;border-top:1px solid var(--border);margin-top:4px}
+
+/* PHOTO */
+.pdrop{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:12px}
+.pdrop:hover{background:var(--warm);border-color:var(--plum-p)}
+.pdrop-icon{font-size:28px;margin-bottom:6px}
+.pdrop-txt{font-size:12px;color:var(--mid)}
+.pimg{max-width:100%;border-radius:7px;margin-bottom:8px}
+.pres{background:var(--warm);border-radius:7px;padding:10px;font-size:12px;line-height:1.6;margin-bottom:8px;white-space:pre-wrap;max-height:180px;overflow-y:auto;color:var(--charcoal)}
+.proc{color:var(--plum-p);font-style:italic;font-size:12px;padding:10px;text-align:center;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ── PRINT VIEW ── */
+@media print {
+  .topbar,.dash-strip,.lp,.tb-nav,.btn-row,.ma{display:none!important}
+  .rp{padding:0}
+  body{background:white;color:black}
+  .card,.dhdr,.dlr,.prop-field{background:white;border:1px solid #ccc}
+  .dname,.cn{color:black}
+}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--lilac-p);border-radius:4px}
+
+/* EMPTY STATE */
+.es{text-align:center;padding:40px;color:var(--muted)}
+.es-icon{font-size:32px;margin-bottom:8px}
+.es-txt{font-size:13px}
+
+/* CONTEXT MENU */
+.ctx-menu{position:fixed;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--sh-lg);z-index:300;min-width:160px;display:none}
+.ctx-menu.open{display:block}
+.ctx-item{padding:8px 14px;font-size:12px;cursor:pointer;transition:background .1s;color:var(--charcoal)}
+.ctx-item:hover{background:var(--warm)}
+.ctx-item.red{color:var(--rose-l)}
+.ctx-divider{height:1px;background:var(--border);margin:3px 0}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-brand">My Hub <span>| Meridian</span></div>
+  <div style="position:relative;flex:1;max-width:240px;margin:0 12px">
+    <input class="search-input" id="gsearch" placeholder="Search everything..." oninput="globalSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)">
+    <div class="search-results" id="gsearch-results"></div>
+  </div>
+  <div class="tb-nav">
+    <button class="nb active" onclick="sv('log')">Log</button>
+    <button class="nb" onclick="sv('projects')">BR Projects</button>
+    <button class="nb" onclick="sv('acquisitions')">Acquisitions</button>
+    <button class="nb" onclick="sv('renewals')">Renewals</button>
+    <button class="nb" onclick="sv('notes')">Notes</button>
+    <button class="nb nb-lists" onclick="openManageLists()">⚙</button>
+  </div>
+</div>
+
+<!-- DASHBOARD STRIP -->
+<div class="dash-strip" id="dash-strip">
+  <div class="ds-card ds-red" onclick="filterHighPriority()" title="Click to filter">
+    <div><div class="ds-num" id="ds-high">0</div><div class="ds-label">High Priority</div></div>
+  </div>
+  <div class="ds-card ds-amber" onclick="filterOverdue()" title="Click to filter">
+    <div><div class="ds-num" id="ds-overdue">0</div><div class="ds-label">Overdue</div></div>
+  </div>
+  <div class="ds-card ds-blue" onclick="sv('log')" title="Open items">
+    <div><div class="ds-num" id="ds-open">0</div><div class="ds-label">Open Items</div></div>
+  </div>
+  <div class="ds-card ds-green">
+    <div><div class="ds-num" id="ds-projects">0</div><div class="ds-label">Active Projects</div></div>
+  </div>
+  <div class="ds-card ds-teal" onclick="sv('renewals')">
+    <div><div class="ds-num" id="ds-renewals">0</div><div class="ds-label">Renewals &lt;90 days</div></div>
+  </div>
+  <div class="ds-divider"></div>
+  <div style="font-size:11px;color:var(--muted)" id="ds-date"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- LEFT PANEL -->
+  <div class="lp">
+    <div class="today-sec">
+      <div class="sec-hdr">
+        Today's Focus
+        <div style="display:flex;gap:5px;align-items:center">
+          <span class="lp-badge" id="tc">0</span>
+          <button class="lp-addbtn" onclick="openTaskModal()">+ Task</button>
+        </div>
+      </div>
+      <div id="tlist"></div>
+    </div>
+    <div class="inbox-sec">
+      <div class="sec-hdr">Inbox <span class="lp-badge lp-badge-red" id="ic">0</span></div>
+      <div id="ilist"></div>
+    </div>
+    <div class="qa">
+      <input class="qi" id="qi" placeholder="Brain dump... Enter to add" onkeydown="if(event.key==='Enter')addInbox()">
+      <button class="qphoto" onclick="openPhotoModal('inbox')" title="Photo capture">📷</button>
+      <button class="qadd" onclick="addInbox()">Add</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="rp" id="rp">
+
+    <!-- LOG -->
+    <div class="view active" id="view-log">
+      <div class="vt">Activity Log</div>
+      <div class="vs">Everything in one place. Right-click any row to quickly change status.</div>
+      <div class="btn-row">
+        <select class="fsel" id="fs" onchange="renderLog()">
+          <option value="Open" selected>Open</option>
+          <option value="">All</option>
+          <option value="On Hold">On Hold</option>
+          <option value="Closed">Closed</option>
+        </select>
+        <select class="fsel" id="fc" onchange="renderLog()">
+          <option value="">All Categories</option>
+          <option>Builders Risk</option><option>OCIP</option><option>Acquisitions</option>
+          <option>Contract Review</option><option>COI Compliance</option><option>Renewals</option>
+          <option>Solar Works</option><option>CAPEx Works</option><option>Admin / Process</option><option>General</option>
+        </select>
+        <select class="fsel" id="fp" onchange="renderLog()">
+          <option value="">All Projects</option>
+        </select>
+        <button class="btn btn-sm" onclick="openLogModal()">+ New Entry</button>
+        <button class="btn btn-sm btn-outline" onclick="clearLogFilters()">Clear Filters</button>
+      </div>
+      <table class="lt">
+        <thead><tr>
+          <th>Date</th><th>Project</th><th>Category</th><th>Type</th>
+          <th>What Was Done</th><th>Awaiting</th><th>Follow-Up</th>
+          <th>Pri</th><th>Status</th><th>Notes</th>
+        </tr></thead>
+        <tbody id="ltbody"></tbody>
+      </table>
+      <div id="le" class="es" style="display:none"><div class="es-icon">✅</div><div class="es-txt">All clear!</div></div>
+    </div>
+
+    <!-- BR PROJECTS -->
+    <div class="view" id="view-projects">
+      <div class="vt">Builders Risk Projects</div>
+      <div class="vs">Click any card or row for full detail. Toggle between card and table view.</div>
+      <div class="btn-row">
+        <button class="btn btn-sm" onclick="openBRModal()">+ Add Project</button>
+        <button class="btn btn-sm btn-outline" id="br-view-toggle" onclick="toggleBRView()">⊞ Table View</button>
+        <select class="fsel" id="br-filter-stat" onchange="renderBR()">
+          <option value="">All Status</option>
+          <option>Placement in Progress</option><option>Active</option>
+          <option>Tracking</option><option>Prospective</option><option>Bound</option><option>On Hold</option>
+        </select>
+      </div>
+      <div id="br-card-view"><div class="grid" id="brgrid"></div></div>
+      <div id="br-table-view" style="display:none">
+        <div class="br-table-wrap">
+          <table class="brt" id="brt">
+            <thead><tr>
+              <th onclick="sortBR('name')">Project <span class="sort-icon">↕</span></th>
+              <th onclick="sortBR('loc')">Location <span class="sort-icon">↕</span></th>
+              <th onclick="sortBR('stat')">Status <span class="sort-icon">↕</span></th>
+              <th onclick="sortBR('carrier')">Carrier <span class="sort-icon">↕</span></th>
+              <th onclick="sortBR('tpc')">TPC <span class="sort-icon">↕</span></th>
+              <th onclick="sortBR('premium')">Premium <span class="sort-icon">↕</span></th>
+              <th onclick="sortBR('estStart')">Est. Start <span class="sort-icon">↕</span></th>
+              <th>Policy #</th>
+              <th>OCIP?</th>
+              <th>Open Action</th>
+            </tr></thead>
+            <tbody id="brtbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACQUISITIONS -->
+    <div class="view" id="view-acquisitions">
+      <div class="vt">Acquisitions</div>
+      <div class="vs">Active acquisition pipeline. Click any card for full detail.</div>
+      <div class="btn-row">
+        <button class="btn btn-sm" onclick="openAcqModal()">+ Add Acquisition</button>
+      </div>
+      <div class="grid" id="acqgrid"></div>
+    </div>
+
+    <!-- RENEWALS -->
+    <div class="view" id="view-renewals">
+      <div class="vt">Renewals & Portfolio</div>
+      <div class="vs">Annual renewal calendar. All lines sorted by days to expiry.</div>
+      <div class="btn-row">
+        <button class="btn btn-sm" onclick="openRenewalModal()">+ Add Policy Line</button>
+      </div>
+      <table class="rn-table">
+        <thead><tr>
+          <th>Policy Line</th><th>Carrier</th><th>Policy #</th>
+          <th>Expiration</th><th>Days Left</th><th>Renewal Target</th>
+          <th>Status</th><th>Premium ($)</th><th>Notes</th>
+        </tr></thead>
+        <tbody id="rntbody"></tbody>
+      </table>
+    </div>
+
+    <!-- MEETING NOTES -->
+    <div class="view" id="view-notes">
+      <div class="vt">Meeting Notes</div>
+      <div class="vs">Search by project, keyword, or topic to find anything instantly.</div>
+      <div class="btn-row">
+        <input class="note-search" id="nsearch" placeholder="Search notes..." oninput="renderNotes()">
+        <select class="fsel" id="nfcat" onchange="renderNotes()"><option value="">All Categories</option>
+          <option>Builders Risk</option><option>OCIP</option><option>Acquisitions</option>
+          <option>Contract Review</option><option>COI Compliance</option><option>Renewals</option>
+          <option>Admin / Process</option><option>General</option>
+        </select>
+        <button class="btn btn-sm" onclick="openNoteModal()">+ New Note</button>
+        <button class="btn btn-sm btn-outline" onclick="openPhotoModal('note')">📷 Photo Note</button>
+      </div>
+      <div id="noteslist"></div>
+      <div id="notese" class="es" style="display:none"><div class="es-icon">📝</div><div class="es-txt">No notes yet</div></div>
+    </div>
+
+    <!-- DETAIL -->
+    <div class="view" id="view-detail">
+      <div class="detail-wrap">
+        <div class="dbk" id="dbk-btn" onclick="backDetail()">← Back</div>
+        <div id="dcontent"></div>
+      </div>
+    </div>
+
+    <!-- NOTE DETAIL -->
+    <div class="view" id="view-notedetail">
+      <div class="detail-wrap">
+        <div class="dbk" onclick="sv('notes')">← Back to Notes</div>
+        <div id="ndcontent"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="ctx-menu" id="ctx-menu">
+  <div class="ctx-item" onclick="ctxAction('open')">Mark Open</div>
+  <div class="ctx-item" onclick="ctxAction('hold')">Mark On Hold</div>
+  <div class="ctx-item" onclick="ctxAction('close')">✓ Mark Closed</div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item" onclick="ctxAction('edit')">Edit Entry</div>
+  <div class="ctx-item red" onclick="ctxAction('delete')">Delete</div>
+</div>
+
+<!-- LOG MODAL -->
+<div class="mo" id="lmo">
+  <div class="md">
+    <div class="mt" id="lmt">New Log Entry</div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Date</label><input type="date" class="fi" id="ld"></div>
+      <div class="fr"><label class="fl">Project</label><select class="fse" id="lp2"></select></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Category</label><select class="fse" id="lc2"></select></div>
+      <div class="fr"><label class="fl">Update Type</label><select class="fse" id="ltype">
+        <option>Submission</option><option>Follow-Up</option><option>Broker Q&A</option>
+        <option>Team Response</option><option>Quote Received</option><option>Bind Order</option>
+        <option>Policy Issued</option><option>Admin / Process</option><option>Meeting</option><option>Other</option>
+      </select></div>
+    </div>
+    <div class="fr"><label class="fl">What Was Sent / Done</label><textarea class="fta" id="lwhat" placeholder="Describe what happened..."></textarea></div>
+    <div class="fr"><label class="fl">Broker / Team Response</label><textarea class="fta" id="lresp" placeholder="What did they say?" style="min-height:60px"></textarea></div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Awaiting From</label><select class="fse" id="lawait">
+        <option>Internal Team</option><option>Broker / Marsh</option><option>Development Team</option>
+        <option>Legal</option><option>Carrier</option><option>Management</option>
+        <option>External Party</option><option>N/A</option>
+      </select></div>
+      <div class="fr"><label class="fl">Follow-Up Date</label><input type="date" class="fi" id="lfu"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Priority</label><select class="fse" id="lpri"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+      <div class="fr"><label class="fl">Status</label><select class="fse" id="lstat"><option selected>Open</option><option>On Hold</option><option>Closed</option></select></div>
+    </div>
+    <div class="fr"><label class="fl">Notes</label><input type="text" class="fi" id="lnotes" placeholder="Any additional context..."></div>
+    <div class="ma">
+      <button class="btn btn-danger" id="ldelbtn" onclick="delLog()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-outline" onclick="closeLmo()">Cancel</button>
+      <button class="btn" onclick="saveLog()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- BR MODAL -->
+<div class="mo" id="brmo">
+  <div class="md md-xl">
+    <div class="mt" id="brmt">New BR Project</div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Project Name</label><input type="text" class="fi" id="brname" placeholder="e.g. Fontana B6"></div>
+      <div class="fr"><label class="fl">Location</label><input type="text" class="fi" id="brloc" placeholder="e.g. Fontana, CA"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Project Type</label><select class="fse" id="brtype">
+        <option>Industrial - Warehouse</option><option>Industrial - Cold Storage</option>
+        <option>Data Center</option><option>Multifamily</option><option>Mixed Use</option><option>Land</option><option>Other</option>
+      </select></div>
+      <div class="fr"><label class="fl">Status</label><select class="fse" id="brstat">
+        <option>Prospective</option><option selected>Placement in Progress</option>
+        <option>Tracking</option><option>Bound</option><option>Active</option><option>On Hold</option><option>Complete</option>
+      </select></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Carrier</label><input type="text" class="fi" id="brcarrier" placeholder="TBD"></div>
+      <div class="fr"><label class="fl">Policy #</label><input type="text" class="fi" id="brpolicy" placeholder="TBD"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Inception Date</label><input type="date" class="fi" id="brinception"></div>
+      <div class="fr"><label class="fl">Expiry Date</label><input type="date" class="fi" id="brexpiry"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Est. Start / Mob. Date</label><input type="date" class="fi" id="breststart"></div>
+      <div class="fr"><label class="fl">Named Insureds</label><input type="text" class="fi" id="brnamed" placeholder="e.g. GLC Fontana III LLC"></div>
+    </div>
+    <div class="section-divider">Project Costs & Coverage</div>
+    <div class="fr3">
+      <div class="fr"><label class="fl">Hard Cost ($)</label><input type="number" class="fi" id="brhc" placeholder="0"></div>
+      <div class="fr"><label class="fl">Soft Cost ($)</label><input type="number" class="fi" id="brsc" placeholder="0"></div>
+      <div class="fr"><label class="fl">Annual Rents ($)</label><input type="number" class="fi" id="brrents" placeholder="0"></div>
+    </div>
+    <div class="fr3">
+      <div class="fr"><label class="fl">Indemnity Period (mo)</label><input type="number" class="fi" id="brindemnity" placeholder="0"></div>
+      <div class="fr"><label class="fl">Deductible</label><input type="text" class="fi" id="brded" placeholder="e.g. $25K"></div>
+      <div class="fr"><label class="fl">Coverage Form</label><select class="fse" id="brcovform">
+        <option>Special Form</option><option>All Risk</option><option>Named Perils</option><option>Broad Form</option>
+      </select></div>
+    </div>
+    <div class="fr3">
+      <div class="fr"><label class="fl">Annual Premium ($)</label><input type="number" class="fi" id="brprem" placeholder="0"></div>
+      <div class="fr"><label class="fl">DSU Quoted?</label><select class="fse" id="brdsu">
+        <option>Pending</option><option>Yes</option><option>No</option><option>N/A</option>
+      </select></div>
+      <div class="fr"><label class="fl">OCIP Project?</label><select class="fse" id="brocip"><option>No</option><option>Yes</option></select></div>
+    </div>
+    <div class="fr"><label class="fl">CAT / Flood Sub-limit</label><input type="text" class="fi" id="brcat" placeholder="e.g. $10M sublimit"></div>
+    <div class="fr"><label class="fl">Endorsements / Notes</label><textarea class="fta" id="brnotes" placeholder="Any endorsements, special conditions, notes..." style="min-height:60px"></textarea></div>
+    <div class="fr"><label class="fl">Current Open Action</label><input type="text" class="fi" id="braction" placeholder="What's the current open action on this project?"></div>
+    <div class="ma">
+      <button class="btn btn-danger" id="brdelbtn" onclick="delBR()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-outline" onclick="closeBRmo()">Cancel</button>
+      <button class="btn" onclick="saveBR()">Save Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACQ MODAL -->
+<div class="mo" id="acqmo">
+  <div class="md">
+    <div class="mt" id="acqmt">New Acquisition</div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Project Name</label><input type="text" class="fi" id="acqname"></div>
+      <div class="fr"><label class="fl">Address</label><input type="text" class="fi" id="acqaddr"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Asset Type</label><select class="fse" id="acqtype">
+        <option>Industrial</option><option>Office</option><option>Retail</option>
+        <option>Mixed Use</option><option>Multifamily</option><option>Land</option><option>Other</option>
+      </select></div>
+      <div class="fr"><label class="fl">Status</label><select class="fse" id="acqstat">
+        <option selected>Prospective</option><option>LOI Signed</option>
+        <option>Under Contract</option><option>Closed</option><option>Dead</option>
+      </select></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Target Close Date</label><input type="date" class="fi" id="acqclose"></div>
+      <div class="fr"><label class="fl">Carrier</label><input type="text" class="fi" id="acqcarrier" placeholder="TBD"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Property Policy</label><select class="fse" id="acqprop">
+        <option selected>TBD</option><option>Pending</option><option>Bound</option><option>Not Required</option>
+      </select></div>
+      <div class="fr"><label class="fl">Casualty Policy</label><select class="fse" id="acqcas">
+        <option selected>TBD</option><option>Pending</option><option>Bound</option><option>Not Required</option>
+      </select></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Environmental / Phase I</label><select class="fse" id="acqenv">
+        <option selected>TBD</option><option>Phase I Pending</option><option>Phase I Complete</option>
+        <option>Phase II Required</option><option>Not Required</option>
+      </select></div>
+      <div class="fr"><label class="fl">Annual Premium ($)</label><input type="number" class="fi" id="acqprem" placeholder="0"></div>
+    </div>
+    <div class="fr"><label class="fl">Notes / Action Items</label><textarea class="fta" id="acqnotes" style="min-height:70px"></textarea></div>
+    <div class="ma">
+      <button class="btn btn-danger" id="acqdelbtn" onclick="delAcq()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-outline" onclick="closeAcqmo()">Cancel</button>
+      <button class="btn" onclick="saveAcq()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- RENEWAL MODAL -->
+<div class="mo" id="rnmo">
+  <div class="md">
+    <div class="mt" id="rnmt">New Policy Line</div>
+    <div class="fr"><label class="fl">Policy Line</label><input type="text" class="fi" id="rnline" placeholder="e.g. Property (Primary)"></div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Carrier</label><input type="text" class="fi" id="rncarrier"></div>
+      <div class="fr"><label class="fl">Broker</label><input type="text" class="fi" id="rnbroker" value="Marsh"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Policy #</label><input type="text" class="fi" id="rnpolicy"></div>
+      <div class="fr"><label class="fl">Annual Premium ($)</label><input type="number" class="fi" id="rnprem"></div>
+    </div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Expiration Date</label><input type="date" class="fi" id="rnexpiry"></div>
+      <div class="fr"><label class="fl">Renewal Target Date</label><input type="date" class="fi" id="rntarget"></div>
+    </div>
+    <div class="fr"><label class="fl">Status</label><select class="fse" id="rnstat">
+      <option>Not Started</option><option>In Progress</option><option>Submitted</option>
+      <option>Quote Received</option><option>Bound</option><option>Complete</option>
+    </select></div>
+    <div class="fr"><label class="fl">Notes</label><input type="text" class="fi" id="rnnotes"></div>
+    <div class="ma">
+      <button class="btn btn-danger" id="rndelbtn" onclick="delRenewal()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-outline" onclick="closeRnmo()">Cancel</button>
+      <button class="btn" onclick="saveRenewal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="mo" id="nmo">
+  <div class="md md-lg">
+    <div class="mt" id="nmt">New Meeting Note</div>
+    <div class="fr"><label class="fl">Title / Meeting Name</label><input type="text" class="fi" id="ntitle" placeholder="e.g. Marsh call re Fontana B6, Pickleball lease review..."></div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Date</label><input type="date" class="fi" id="ndate"></div>
+      <div class="fr"><label class="fl">Project</label><select class="fse" id="nproj"><option value="">— General —</option></select></div>
+    </div>
+    <div class="fr"><label class="fl">Category</label><select class="fse" id="ncat2" style="width:auto">
+      <option>Builders Risk</option><option>OCIP</option><option>Acquisitions</option>
+      <option>Contract Review</option><option>COI Compliance</option><option>Renewals</option>
+      <option>Admin / Process</option><option>General</option>
+    </select></div>
+    <div class="fr"><label class="fl">Notes / Details</label><textarea class="fta fta-lg" id="nbody" placeholder="Type meeting notes, decisions made, key details, research findings...&#10;&#10;Tip: include names, dates, and why decisions were made so you can find the context later."></textarea></div>
+    <div class="fr"><label class="fl">Action Items from this meeting</label><textarea class="fta" id="nactions" placeholder="List tasks or follow-ups — these become Today tasks automatically" style="min-height:60px"></textarea></div>
+    <div class="ma">
+      <button class="btn btn-danger" id="ndelbtn" onclick="delNote()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-outline" onclick="closeNmo()">Cancel</button>
+      <button class="btn" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="mo" id="tmo">
+  <div class="md">
+    <div class="mt">Add to Today</div>
+    <div class="fr"><label class="fl">Task</label><input type="text" class="fi" id="ttask" placeholder="What do you need to do today?" onkeydown="if(event.key==='Enter')saveTask()"></div>
+    <div class="fr2">
+      <div class="fr"><label class="fl">Category</label><select class="fse" id="tcat">
+        <option>Builders Risk</option><option>OCIP</option><option>Acquisitions</option>
+        <option>Contract Review</option><option>Renewals</option><option>Admin / Process</option><option selected>General</option>
+      </select></div>
+      <div class="fr"><label class="fl">Priority</label><select class="fse" id="tpri">
+        <option>High</option><option selected>Medium</option><option>Low</option>
+      </select></div>
+    </div>
+    <div class="ma">
+      <button class="btn btn-outline" onclick="document.getElementById('tmo').classList.remove('open')">Cancel</button>
+      <button class="btn" onclick="saveTask()">Add to Today</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="mo" id="pmo">
+  <div class="md">
+    <div class="mt">📷 Capture Notes</div>
+    <div class="pdrop" onclick="document.getElementById('pfile').click()">
+      <div class="pdrop-icon">📸</div>
+      <div class="pdrop-txt">Click to upload a photo of handwritten notes<br><small style="color:var(--muted)">AI reads your handwriting and extracts the text</small></div>
+    </div>
+    <input type="file" id="pfile" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
+    <img id="pimg" class="pimg" style="display:none">
+    <div id="pproc" class="proc" style="display:none">✨ Reading your notes...</div>
+    <div id="pres" class="pres" style="display:none"></div>
+    <div class="ma">
+      <button class="btn btn-outline" onclick="closePmo()">Close</button>
+      <button class="btn" id="paddbtn" onclick="addPhotoToTarget()" style="display:none">Add to Inbox</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE LISTS -->
+<div class="mo" id="mlmo">
+  <div class="md">
+    <div class="mt">⚙ Manage Dropdown Lists</div>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:16px">Add permanent options that save across sessions and appear in all relevant dropdowns.</p>
+    <div class="fr">
+      <label class="fl">Projects / Acquisitions</label>
+      <div style="display:flex;gap:7px;margin-bottom:7px">
+        <input type="text" class="fi" id="ml-proj" placeholder="e.g. Project Sky, Bellwether Phase 2..." onkeydown="if(event.key==='Enter')addCustomOption('proj')" style="flex:1">
+        <button class="btn btn-sm" onclick="addCustomOption('proj')">Add</button>
+      </div>
+      <div id="ml-proj-list" style="display:flex;flex-wrap:wrap;gap:5px;min-height:24px"></div>
+    </div>
+    <div class="fr" style="margin-top:14px">
+      <label class="fl">Categories</label>
+      <div style="display:flex;gap:7px;margin-bottom:7px">
+        <input type="text" class="fi" id="ml-cat" placeholder="e.g. Corporate Compliance, Entity Setup..." onkeydown="if(event.key==='Enter')addCustomOption('cat')" style="flex:1">
+        <button class="btn btn-sm" onclick="addCustomOption('cat')">Add</button>
+      </div>
+      <div id="ml-cat-list" style="display:flex;flex-wrap:wrap;gap:5px;min-height:24px"></div>
+    </div>
+    <div class="fr" style="margin-top:14px">
+      <label class="fl">Update Types</label>
+      <div style="display:flex;gap:7px;margin-bottom:7px">
+        <input type="text" class="fi" id="ml-type" placeholder="e.g. Site Visit, Internal Meeting..." onkeydown="if(event.key==='Enter')addCustomOption('type')" style="flex:1">
+        <button class="btn btn-sm" onclick="addCustomOption('type')">Add</button>
+      </div>
+      <div id="ml-type-list" style="display:flex;flex-wrap:wrap;gap:5px;min-height:24px"></div>
+    </div>
+    <div class="ma"><button class="btn btn-outline" onclick="document.getElementById('mlmo').classList.remove('open')">Close</button></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════
+const SK={log:'mh_log',inbox:'mh_inbox',tasks:'mh_tasks',br:'mh_br',acq:'mh_acq',notes:'mh_notes',renewals:'mh_renewals',custom:'mh_custom'};
+function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
+function sv2(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+// ═══════════════════════════════════════════════════
+// SEED DATA
+// ═══════════════════════════════════════════════════
+function seed(){
+  if(!localStorage.getItem(SK.log)){sv2(SK.log,[
+    {id:1,date:'2026-03-01',proj:'Fontana B6',cat:'Builders Risk',type:'Submission',what:'Submitted BR questionnaire, budget, schedule, geotech report to Marsh',resp:'Broker acknowledged receipt',await:'Broker / Marsh',fu:'2026-03-16',pri:'Medium',stat:'Closed',notes:'Initial underwriting submission package complete'},
+    {id:2,date:'2026-03-10',proj:'Fontana B6',cat:'Builders Risk',type:'Broker Q&A',what:'Marsh follow-up questions received',resp:'Q1: Should rents be added to TPC? Q2: Interest in DSU?',await:'Internal Team',fu:'2026-03-11',pri:'High',stat:'Closed',notes:'Emailed PM team for response'},
+    {id:3,date:'2026-03-10',proj:'LAX01',cat:'Builders Risk',type:'Other',what:'Policy fully issued — active coverage confirmed',resp:'All policies on file. Pending Zurich and Endurance policy numbers',await:'Broker / Marsh',fu:'2026-03-11',pri:'High',stat:'Closed',notes:'TM needs invoices'},
+    {id:4,date:'2026-03-10',proj:'LAX03',cat:'Builders Risk',type:'Follow-Up',what:'Requested construction timeline / status',resp:'',await:'Internal Team',fu:'2026-03-13',pri:'High',stat:'Open',notes:'Need: budget, schedule, geotech, site plans; OCIP'},
+    {id:5,date:'2026-03-10',proj:'LAX02',cat:'Builders Risk',type:'Follow-Up',what:'Requested construction timeline / status',resp:'',await:'Internal Team',fu:'2026-03-13',pri:'Medium',stat:'Open',notes:'Budget, schedule, geotech, site plans needed; OCIP'},
+    {id:6,date:'2026-03-10',proj:'Jersey City',cat:'Builders Risk',type:'Team Response',what:'Requested updated construction timeline',resp:'',await:'Internal Team',fu:'2026-03-20',pri:'Medium',stat:'Open',notes:'Need PM sign-off on DSU inclusion'},
+    {id:7,date:'2026-03-09',proj:'Milpitas',cat:'Builders Risk',type:'Follow-Up',what:'Sent team BIV/BRQ',resp:'',await:'Internal Team',fu:'2026-03-13',pri:'Medium',stat:'Open',notes:''},
+    {id:8,date:'2026-03-10',proj:'Fontana B6',cat:'Builders Risk',type:'Team Response',what:'Team response received — no tenant, TPC won\'t include rent or DSU',resp:'Modified panelized roof structure uses OSB plywood',await:'Broker / Marsh',fu:'2026-03-16',pri:'High',stat:'Open',notes:'AWAITING MARSH QUOTES'},
+    {id:9,date:'2026-03-13',proj:'LAX02',cat:'OCIP',type:'Follow-Up',what:'Requested status of OCIP discussions',resp:'',await:'Internal Team',fu:'2026-03-13',pri:'High',stat:'Open',notes:'Coverage must be in place before work starts'},
+    {id:10,date:'2026-03-13',proj:'LAX03',cat:'OCIP',type:'Follow-Up',what:'Requested status of OCIP discussions',resp:'',await:'Internal Team',fu:'2026-03-13',pri:'High',stat:'Open',notes:'Consider single OCIP with LAX02'},
+    {id:11,date:'2026-03-01',proj:'LAX01',cat:'Builders Risk',type:'Quote Received',what:'Received premium summary for increased CV and fitout',resp:'',await:'Internal Team',fu:'2026-03-16',pri:'High',stat:'Open',notes:'AWAITING TEAM APPROVAL'},
+    {id:12,date:'2026-03-13',proj:'Fontana B6',cat:'Builders Risk',type:'Broker Q&A',what:'Marsh RFI — combustible materials / wood use in roof',resp:'Team confirmed: modified panelized roof, OSB plywood',await:'Broker / Marsh',fu:'2026-03-16',pri:'High',stat:'Open',notes:'AWAITING MARSH QUOTES'},
+    {id:13,date:'2026-03-13',proj:'General',cat:'Admin / Process',type:'Admin / Process',what:'Coordinate with SSST on Yardi UAT and overriding exceptions',resp:'',await:'Internal Team',fu:'2026-03-27',pri:'Medium',stat:'Open',notes:'SSST will reach out to arrange testing'},
+    {id:14,date:'2026-03-13',proj:'General',cat:'Admin / Process',type:'Admin / Process',what:'Rework MCA/MCS summary per SC email',resp:'',await:'Internal Team',fu:'2026-03-17',pri:'Medium',stat:'Open',notes:''},
+  ])}
+  if(!localStorage.getItem(SK.tasks)){sv2(SK.tasks,[
+    {id:1,task:'Rework MCA/MCS summary per SC email',cat:'Admin / Process',pri:'Medium',done:false},
+    {id:2,task:'Update SOV for renewal',cat:'Renewals',pri:'High',done:false},
+    {id:3,task:'Standard Form contracts — APC calendar call Wed-Fri morning-2PM',cat:'Contract Review',pri:'Medium',done:false},
+  ])}
+  if(!localStorage.getItem(SK.br)){sv2(SK.br,[
+    {id:1,name:'Fontana B6',loc:'Fontana, CA',type:'Industrial - Warehouse',stat:'Placement in Progress',carrier:'TBD',policy:'TBD',inception:'',expiry:'',estStart:'2026-03-31',named:'GLC Fontana III LLC',hc:14952094,sc:2509161,rents:0,indemnity:0,ded:'TBD',covform:'Special Form',premium:0,dsu:'Pending',ocip:'No',cat:'TBD',notes:'Submitted BR questionnaire, budget, schedule, geotech report',action:'Awaiting Marsh quotes re: roof materials (OSB/combustible)'},
+    {id:2,name:'LAX01',loc:'Los Angeles, CA',type:'Data Center',stat:'Active',carrier:'Illinois Union (Chubb) — Lead',policy:'I11226358 001',inception:'2025-04-17',expiry:'2027-10-25',estStart:'',named:'Soto DC LLC',hc:0,sc:0,rents:0,indemnity:0,ded:'TBD per layer',covform:'Special Form',premium:865563,dsu:'N/A',ocip:'No',cat:'TBD',notes:'4-carrier layered program',action:'Confirm Endurance and Zurich policy numbers'},
+    {id:3,name:'LAX02',loc:'Los Angeles, CA',type:'Data Center',stat:'Tracking',carrier:'TBD',policy:'TBD',inception:'',expiry:'',estStart:'2026-07-01',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'TBD',covform:'Special Form',premium:0,dsu:'',ocip:'Yes',cat:'TBD',notes:'',action:'Awaiting construction timeline from team'},
+    {id:4,name:'LAX03',loc:'Los Angeles, CA',type:'Data Center',stat:'Tracking',carrier:'Everest',policy:'TBD',inception:'',expiry:'',estStart:'2026-07-01',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'TBD',covform:'Special Form',premium:0,dsu:'',ocip:'Yes',cat:'TBD',notes:'',action:'Awaiting timeline — coordinate OCIP with LAX02'},
+    {id:5,name:'Cypress B3',loc:'Cypress, CA',type:'Industrial - Warehouse',stat:'Tracking',carrier:'Allianz',policy:'',inception:'',expiry:'',estStart:'',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'',covform:'Special Form',premium:0,dsu:'',ocip:'No',cat:'',notes:'',action:''},
+    {id:6,name:'Lehigh Valley West',loc:'Lehigh Valley, PA',type:'Industrial - Warehouse',stat:'Prospective',carrier:'Swiss Re',policy:'',inception:'',expiry:'',estStart:'',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'',covform:'Special Form',premium:0,dsu:'',ocip:'No',cat:'',notes:'',action:''},
+    {id:7,name:'Jersey City',loc:'Jersey City, NJ',type:'Industrial - Warehouse',stat:'Prospective',carrier:'AIG',policy:'',inception:'',expiry:'',estStart:'',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'',covform:'Special Form',premium:0,dsu:'',ocip:'No',cat:'',notes:'',action:'Awaiting updated construction timeline'},
+    {id:8,name:'Queens',loc:'Queens, NY',type:'Industrial - Warehouse',stat:'Prospective',carrier:'Chubb',policy:'',inception:'',expiry:'',estStart:'',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'',covform:'Special Form',premium:0,dsu:'',ocip:'No',cat:'',notes:'',action:''},
+    {id:9,name:'Northtown',loc:'San Jose, CA',type:'Data Center',stat:'Tracking',carrier:'TBD',policy:'',inception:'',expiry:'',estStart:'',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'',covform:'Special Form',premium:0,dsu:'',ocip:'Yes',cat:'',notes:'',action:'Permit delayed — OCIP on hold'},
+    {id:10,name:'Milpitas',loc:'Milpitas, CA',type:'Industrial - Warehouse',stat:'Placement in Progress',carrier:'Berkshire',policy:'',inception:'',expiry:'',estStart:'',named:'',hc:0,sc:0,rents:0,indemnity:0,ded:'',covform:'Special Form',premium:0,dsu:'',ocip:'No',cat:'',notes:'',action:'BIV/BRQ sent — awaiting team response'},
+  ])}
+  if(!localStorage.getItem(SK.acq)){sv2(SK.acq,[
+    {id:1,name:'Project Explorer / Anheuser Busch',addr:'Newark, NJ',type:'Industrial',stat:'Prospective',closeDate:'',carrier:'Chubb',prop:'Bound – awaiting final policy',cas:'Pending',env:'Phase I Complete',prem:185000,notes:'Phase II ESA may be required'},
+    {id:2,name:'Schmoyer',addr:'Pennsylvania',type:'Industrial',stat:'Prospective',closeDate:'',carrier:'Swiss Re',prop:'Pending bind',cas:'Pending',env:'Phase I Complete',prem:95000,notes:'Bind property policy 30 days prior to close'},
+    {id:3,name:'Lehigh Valley West (Arndt & Sutliff)',addr:'Pennsylvania',type:'Industrial',stat:'Prospective',closeDate:'',carrier:'TBD',prop:'TBD',cas:'TBD',env:'TBD',prem:0,notes:'Confirm acquisition details'},
+    {id:4,name:'Bellwether',addr:'Pennsylvania',type:'Industrial',stat:'Prospective',closeDate:'',carrier:'TBD',prop:'TBD',cas:'TBD',env:'Phase I Pending',prem:0,notes:'Follow up Phase I ESA delivery'},
+  ])}
+  if(!localStorage.getItem(SK.renewals)){sv2(SK.renewals,[
+    {id:1,line:'Property (Primary)',carrier:'Swiss Re',broker:'Marsh',policy:'PROP-2025-001',expiry:'2026-06-30',target:'2026-04-01',stat:'In Progress',prem:'',notes:'SOV 2026/27 in progress. Solar exposure Q from underwriter.'},
+    {id:2,line:'Builders Risk — Portfolio',carrier:'Various',broker:'Marsh',policy:'See BR Tab',expiry:'',target:'',stat:'Ongoing',prem:'',notes:'Individual projects tracked on BR tab'},
+    {id:3,line:'Casualty (Primary GL)',carrier:'Chubb',broker:'Marsh',policy:'CAS-2025-001',expiry:'2026-06-30',target:'2026-04-15',stat:'Not Started',prem:'',notes:''},
+    {id:4,line:'Excess / Umbrella',carrier:'AIG',broker:'Marsh',policy:'XS-2025-001',expiry:'2026-06-30',target:'2026-04-15',stat:'Not Started',prem:'',notes:''},
+    {id:5,line:'Environmental / Pollution',carrier:'AWAC',broker:'Marsh',policy:'ENV-2025-001',expiry:'2026-09-01',target:'2026-06-01',stat:'Not Started',prem:'',notes:'SOV includes new acquisitions'},
+    {id:6,line:'Auto',carrier:'Travelers',broker:'Marsh',policy:'AUTO-2025-001',expiry:'2026-06-30',target:'2026-05-01',stat:'Not Started',prem:'',notes:''},
+    {id:7,line:'Workers Compensation',carrier:'Travelers',broker:'Marsh',policy:'WC-2025-001',expiry:'2026-06-30',target:'2026-05-01',stat:'Not Started',prem:'',notes:''},
+    {id:8,line:'D&O / Management Liability',carrier:'Chubb',broker:'Marsh',policy:'DO-2025-001',expiry:'2026-06-30',target:'2026-05-01',stat:'Not Started',prem:'',notes:''},
+    {id:9,line:'Cyber',carrier:'Coalition',broker:'Marsh',policy:'CYB-2025-001',expiry:'2026-06-30',target:'2026-05-01',stat:'Not Started',prem:'',notes:''},
+    {id:10,line:'Terrorism (TRIPRA)',carrier:'AIG',broker:'Marsh',policy:'TER-2025-001',expiry:'2026-06-30',target:'2026-04-01',stat:'Not Started',prem:'',notes:''},
+    {id:11,line:'DIC / CA EQ',carrier:'TBD',broker:'Marsh',policy:'TBD',expiry:'2026-06-30',target:'',stat:'Not Started',prem:'',notes:''},
+  ])}
+  if(!localStorage.getItem(SK.notes)){sv2(SK.notes,[
+    {id:1,date:'2026-02-01',title:'Roux MSA — Insurance Review',proj:'General',cat:'Contract Review',body:'Named insured vs. Additional Insured discrepancy found. WOS clause missing entirely.\n\nProposed replacement language sent 2/15. Key issue: Roux wants to be named insured on our property policy which is not appropriate. AI status is correct.\n\nDecision: Hold approval until Roux accepts AI language. Legal to review redline.',actions:'Follow up on Roux redline response\nConfirm with legal on AI vs NI language'},
+    {id:2,date:'2026-01-15',title:'Beyond Pickleball Lease — Limit Reduction Request',proj:'General',cat:'Contract Review',body:'Tenant requested GL limit reduction: from $5M primary / $5M umbrella to $1M primary / $2M umbrella.\n\nResearch: tenant doing pickleball courts — higher slip/fall exposure than standard retail. No tenant improvements planned.\n\nMarsh comments: gap in umbrella is concern given activity type.\n\nDecision: Approved exception at $2M primary / $5M umbrella with documented rationale. Legal approved 2/1.',actions:'Document approved exception in contract file\nConfirm with legal — DONE'},
+  ])}
+  if(!localStorage.getItem(SK.inbox)){sv2(SK.inbox,[])}
+  if(!localStorage.getItem(SK.custom)){sv2(SK.custom,{proj:[],cat:[],type:[]})}
+}
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let curView='log',editLogId=null,editBRId=null,editAcqId=null,editNoteId=null,editRnId=null;
+let prevView='log',photoTarget='inbox',photoText='';
+let brViewMode='card',brSortKey='name',brSortDir=1;
+let ctxLogId=null;
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  seed();
+  const d=new Date();
+  document.getElementById('ds-date').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('ld').value=d.toISOString().split('T')[0];
+  document.getElementById('ndate').value=d.toISOString().split('T')[0];
+  rebuildAllDropdowns();
+  renderAll();
+  document.addEventListener('click',()=>{
+    document.getElementById('ctx-menu').classList.remove('open');
+  });
+});
+
+function renderAll(){
+  renderDash();renderToday();renderInbox();renderLog();
+  renderBR();renderAcq();renderRenewals();renderNotes();
+}
+
+// ═══════════════════════════════════════════════════
+// VIEW SWITCH
+// ═══════════════════════════════════════════════════
+function sv(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  const map={log:0,projects:1,acquisitions:2,renewals:3,notes:4};
+  if(map[v]!==undefined) document.querySelectorAll('.nb')[map[v]].classList.add('active');
+  curView=v;
+  document.getElementById('rp').scrollTop=0;
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDash(){
+  const log=ld(SK.log,[]);
+  const today=new Date().toISOString().split('T')[0];
+  const open=log.filter(e=>e.stat==='Open');
+  const high=open.filter(e=>e.pri==='High').length;
+  const overdue=open.filter(e=>e.fu&&e.fu<today).length;
+  const br=ld(SK.br,[]);
+  const active=br.filter(p=>['Active','Placement in Progress','Bound'].includes(p.stat)).length;
+  const rn=ld(SK.renewals,[]);
+  const soon=rn.filter(r=>{
+    if(!r.expiry)return false;
+    const days=Math.ceil((new Date(r.expiry)-new Date())/(1000*60*60*24));
+    return days>=0&&days<=90;
+  }).length;
+  document.getElementById('ds-high').textContent=high;
+  document.getElementById('ds-overdue').textContent=overdue;
+  document.getElementById('ds-open').textContent=open.length;
+  document.getElementById('ds-projects').textContent=active;
+  document.getElementById('ds-renewals').textContent=soon;
+}
+
+function filterHighPriority(){
+  sv('log');
+  document.getElementById('fs').value='Open';
+  document.getElementById('fc').value='';
+  // Can't filter by priority in select, but scroll to log
+  renderLog();
+}
+function filterOverdue(){sv('log');document.getElementById('fs').value='Open';renderLog()}
+function clearLogFilters(){
+  document.getElementById('fs').value='Open';
+  document.getElementById('fc').value='';
+  document.getElementById('fp').value='';
+  renderLog();
+}
+
+// ═══════════════════════════════════════════════════
+// TODAY
+// ═══════════════════════════════════════════════════
+function renderToday(){
+  const tasks=ld(SK.tasks,[]);
+  document.getElementById('tc').textContent=tasks.filter(t=>!t.done).length;
+  const list=document.getElementById('tlist');
+  if(!tasks.length){list.innerHTML='<div style="padding:12px 16px;font-size:11.5px;color:var(--muted)">No tasks — add from inbox or + Task button</div>';return}
+  list.innerHTML=tasks.map(t=>`
+    <div class="ti">
+      <div class="chk ${t.done?'on':''}" onclick="toggleTask(${t.id})"></div>
+      <div style="flex:1">
+        <div class="tt ${t.done?'done':''}">${t.task}</div>
+        <div class="tmeta">
+          <span class="tag ${tcls(t.cat)}">${t.cat}</span>
+          <span class="tag t-${t.pri.toLowerCase().slice(0,2)}">${t.pri}</span>
+          <span onclick="removeTask(${t.id})" style="cursor:pointer;color:var(--muted);margin-left:2px">✕</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function tcls(c){return{['Builders Risk']:'t-br',OCIP:'t-oc',Acquisitions:'t-aq',['Admin / Process']:'t-ad',['Contract Review']:'t-co',Renewals:'t-re',General:'t-ge'}[c]||'t-ge'}
+function toggleTask(id){const t=ld(SK.tasks,[]);const x=t.find(i=>i.id===id);if(x)x.done=!x.done;sv2(SK.tasks,t);renderToday()}
+function removeTask(id){sv2(SK.tasks,ld(SK.tasks,[]).filter(t=>t.id!==id));renderToday()}
+function openTaskModal(){document.getElementById('ttask').value='';document.getElementById('tmo').classList.add('open');setTimeout(()=>document.getElementById('ttask').focus(),100)}
+function saveTask(){
+  const v=document.getElementById('ttask').value.trim();if(!v)return;
+  const t=ld(SK.tasks,[]);
+  t.push({id:Date.now(),task:v,cat:document.getElementById('tcat').value,pri:document.getElementById('tpri').value,done:false});
+  sv2(SK.tasks,t);document.getElementById('tmo').classList.remove('open');renderToday();
+}
+
+// ═══════════════════════════════════════════════════
+// INBOX
+// ═══════════════════════════════════════════════════
+function addInbox(){
+  const el=document.getElementById('qi');const v=el.value.trim();if(!v)return;
+  const inbox=ld(SK.inbox,[]);
+  inbox.unshift({id:Date.now(),text:v,time:new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})});
+  sv2(SK.inbox,inbox);el.value='';renderInbox();
+}
+function renderInbox(){
+  const inbox=ld(SK.inbox,[]);
+  document.getElementById('ic').textContent=inbox.length;
+  const list=document.getElementById('ilist');
+  if(!inbox.length){list.innerHTML='<div style="padding:12px 16px;font-size:11.5px;color:var(--muted)">Inbox clear ✓</div>';return}
+  list.innerHTML=inbox.map(i=>`
+    <div class="ii">
+      <div class="idot"></div>
+      <div style="flex:1"><div class="itext">${i.text}</div><div class="itime">${i.time||''}</div></div>
+      <div class="ibtns">
+        <button class="ibtn" onclick="p2today(${i.id})">→ Today</button>
+        <button class="ibtn" onclick="p2log(${i.id})">→ Log</button>
+        <button class="ibtn" onclick="p2note(${i.id})">→ Note</button>
+        <button class="ibtn red" onclick="dismissInbox(${i.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+function p2today(id){
+  const inbox=ld(SK.inbox,[]);const item=inbox.find(x=>x.id===id);if(!item)return;
+  const tasks=ld(SK.tasks,[]);tasks.push({id:Date.now(),task:item.text,cat:'General',pri:'Medium',done:false});
+  sv2(SK.tasks,tasks);sv2(SK.inbox,inbox.filter(x=>x.id!==id));renderInbox();renderToday();
+}
+function p2log(id){
+  const inbox=ld(SK.inbox,[]);const item=inbox.find(x=>x.id===id);if(!item)return;
+  clearLogForm();document.getElementById('lwhat').value=item.text;
+  sv2(SK.inbox,inbox.filter(x=>x.id!==id));renderInbox();openLogModal();
+}
+function p2note(id){
+  const inbox=ld(SK.inbox,[]);const item=inbox.find(x=>x.id===id);if(!item)return;
+  document.getElementById('nbody').value=item.text;
+  sv2(SK.inbox,inbox.filter(x=>x.id!==id));renderInbox();openNoteModal();
+}
+function dismissInbox(id){sv2(SK.inbox,ld(SK.inbox,[]).filter(x=>x.id!==id));renderInbox()}
+
+// ═══════════════════════════════════════════════════
+// LOG
+// ═══════════════════════════════════════════════════
+function renderLog(){
+  const log=ld(SK.log,[]);
+  const today=new Date().toISOString().split('T')[0];
+  const fs=document.getElementById('fs').value;
+  const fc=document.getElementById('fc').value;
+  const fp=document.getElementById('fp').value;
+  let filtered=log.filter(e=>{
+    if(fs&&e.stat!==fs)return false;
+    if(fc&&e.cat!==fc)return false;
+    if(fp&&e.proj!==fp)return false;
+    return true;
+  }).sort((a,b)=>{
+    if(a.stat==='Closed'&&b.stat!=='Closed')return 1;
+    if(b.stat==='Closed'&&a.stat!=='Closed')return -1;
+    const od=(a.fu&&a.fu<today)?-1:(b.fu&&b.fu<today)?1:0;
+    if(od)return od;
+    return {High:0,Medium:1,Low:2}[a.pri]-{High:0,Medium:1,Low:2}[b.pri];
+  });
+  const tb=document.getElementById('ltbody');
+  document.getElementById('le').style.display=filtered.length?'none':'block';
+  tb.innerHTML=filtered.map(e=>{
+    const overdue=e.stat!=='Closed'&&e.fu&&e.fu<today;
+    return`<tr class="lr ${e.stat==='Closed'?'cl':''} ${overdue?'overdue':''}" 
+      onclick="openLogModal(${e.id})" 
+      oncontextmenu="showCtxMenu(event,${e.id})">
+      <td style="white-space:nowrap">${fd(e.date)}</td>
+      <td style="font-weight:500;white-space:nowrap">${e.proj}</td>
+      <td><span class="tag ${tcls(e.cat)}">${e.cat}</span></td>
+      <td style="font-size:11px;color:var(--mid);white-space:nowrap">${e.type}</td>
+      <td style="max-width:200px">${e.what}</td>
+      <td>${ab(e.await)}</td>
+      <td style="white-space:nowrap;font-size:11px">${fd(e.fu)}${overdue?'<span class="overdue-badge">OVERDUE</span>':''}</td>
+      <td><span class="p-${e.pri.toLowerCase().slice(0,2)}">${e.pri}</span></td>
+      <td><span class="s-${e.stat==='On Hold'?'ho':e.stat.toLowerCase().slice(0,2)}">${e.stat}</span></td>
+      <td style="max-width:160px;font-size:11px;color:var(--mid)">${e.notes}</td>
+    </tr>`;
+  }).join('');
+}
+function fd(d){if(!d)return'';try{return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric',year:'2-digit'})}catch{return d}}
+function ab(a){if(!a)return'';const c=a==='Internal Team'?'a-int':a==='Broker / Marsh'?'a-mar':a==='External Party'?'a-ext':'a-oth';return`<span class="ab ${c}">${a}</span>`}
+function fm(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString()}
+function daysUntil(d){if(!d)return null;const diff=Math.ceil((new Date(d+'T00:00:00')-new Date())/(1000*60*60*24));return diff}
+
+// CONTEXT MENU
+function showCtxMenu(e,id){
+  e.preventDefault();e.stopPropagation();
+  ctxLogId=id;
+  const menu=document.getElementById('ctx-menu');
+  menu.style.left=Math.min(e.clientX,window.innerWidth-170)+'px';
+  menu.style.top=Math.min(e.clientY,window.innerHeight-180)+'px';
+  menu.classList.add('open');
+}
+function ctxAction(action){
+  if(!ctxLogId)return;
+  const log=ld(SK.log,[]);
+  const entry=log.find(e=>e.id===ctxLogId);
+  if(!entry)return;
+  if(action==='open')entry.stat='Open';
+  else if(action==='hold')entry.stat='On Hold';
+  else if(action==='close'){entry.stat='Closed'}
+  else if(action==='edit'){openLogModal(ctxLogId);return}
+  else if(action==='delete'){if(confirm('Delete this entry?'))sv2(SK.log,log.filter(e=>e.id!==ctxLogId))}
+  if(action!=='delete')sv2(SK.log,log);
+  renderLog();renderDash();
+}
+
+// LOG MODAL
+function clearLogForm(){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('ld').value=today;
+  document.getElementById('lp2').selectedIndex=0;
+  document.getElementById('lc2').selectedIndex=0;
+  document.getElementById('ltype').value='Follow-Up';
+  document.getElementById('lwhat').value='';
+  document.getElementById('lresp').value='';
+  document.getElementById('lawait').value='Internal Team';
+  document.getElementById('lfu').value='';
+  document.getElementById('lpri').value='Medium';
+  document.getElementById('lstat').value='Open';
+  document.getElementById('lnotes').value='';
+}
+function openLogModal(id){
+  editLogId=id||null;
+  document.getElementById('lmt').textContent=id?'Edit Log Entry':'New Log Entry';
+  document.getElementById('ldelbtn').style.display=id?'block':'none';
+  if(id){
+    const e=ld(SK.log,[]).find(x=>x.id===id);
+    if(e){
+      document.getElementById('ld').value=e.date;
+      document.getElementById('lp2').value=e.proj;
+      document.getElementById('lc2').value=e.cat;
+      document.getElementById('ltype').value=e.type;
+      document.getElementById('lwhat').value=e.what;
+      document.getElementById('lresp').value=e.resp||'';
+      document.getElementById('lawait').value=e.await;
+      document.getElementById('lfu').value=e.fu||'';
+      document.getElementById('lpri').value=e.pri;
+      document.getElementById('lstat').value=e.stat;
+      document.getElementById('lnotes').value=e.notes||'';
+    }
+  }else{clearLogForm()}
+  document.getElementById('lmo').classList.add('open');
+}
+function closeLmo(){document.getElementById('lmo').classList.remove('open');editLogId=null}
+function saveLog(){
+  const log=ld(SK.log,[]);
+  const e={id:editLogId||Date.now(),date:document.getElementById('ld').value,
+    proj:document.getElementById('lp2').value,cat:document.getElementById('lc2').value,
+    type:document.getElementById('ltype').value,what:document.getElementById('lwhat').value,
+    resp:document.getElementById('lresp').value,await:document.getElementById('lawait').value,
+    fu:document.getElementById('lfu').value,pri:document.getElementById('lpri').value,
+    stat:document.getElementById('lstat').value,notes:document.getElementById('lnotes').value};
+  if(editLogId){const i=log.findIndex(x=>x.id===editLogId);if(i>=0)log[i]=e}else log.push(e);
+  sv2(SK.log,log);closeLmo();renderLog();renderDash();
+}
+function delLog(){if(!confirm('Delete?'))return;sv2(SK.log,ld(SK.log,[]).filter(x=>x.id!==editLogId));closeLmo();renderLog();renderDash()}
+
+// ═══════════════════════════════════════════════════
+// BR PROJECTS
+// ═══════════════════════════════════════════════════
+const SCMAP={'Active':'c-act','Placement in Progress':'c-pip','Tracking':'c-trk','Prospective':'c-pro','Bound':'c-bnd','On Hold':'c-hld'};
+const SBMAP={'Active':'cs-act','Placement in Progress':'cs-pip','Tracking':'cs-trk','Prospective':'cs-pro','Bound':'cs-bnd','On Hold':'cs-hld'};
+
+function renderBR(){
+  let brs=ld(SK.br,[]);
+  const sf=document.getElementById('br-filter-stat').value;
+  if(sf)brs=brs.filter(p=>p.stat===sf);
+  if(brViewMode==='card')renderBRCards(brs);
+  else renderBRTable(brs);
+}
+
+function renderBRCards(brs){
+  document.getElementById('brgrid').innerHTML=brs.map(p=>`
+    <div class="card ${SCMAP[p.stat]||''}" onclick="showDetail('br',${p.id})">
+      <div class="cn">${p.name}</div>
+      <div class="cl2">${p.loc} · ${p.type}${p.ocip==='Yes'?' · <span style="color:var(--teal-l)">OCIP</span>':''}</div>
+      <span class="cs ${SBMAP[p.stat]||''}">${p.stat}</span>
+      <div class="cd">
+        ${p.carrier&&p.carrier!=='TBD'?`<div class="cd-r"><span class="cd-l">Carrier</span><span class="cd-v">${p.carrier}</span></div>`:''}
+        ${calcTPC(p)?`<div class="cd-r"><span class="cd-l">TPC</span><span class="cd-v" style="color:var(--teal-l)">${fm(calcTPC(p))}</span></div>`:''}
+        ${p.premium?`<div class="cd-r"><span class="cd-l">Premium</span><span class="cd-v" style="color:var(--sage-l)">${fm(p.premium)}</span></div>`:''}
+        ${p.estStart?`<div class="cd-r"><span class="cd-l">Est. Start</span><span class="cd-v">${fd(p.estStart)}</span></div>`:''}
+        ${p.policy&&p.policy!=='TBD'?`<div class="cd-r"><span class="cd-l">Policy #</span><span class="cd-v">${p.policy}</span></div>`:''}
+      </div>
+      ${p.action?`<div class="ca">${p.action}</div>`:`<div class="ca n">No open actions</div>`}
+    </div>`).join('');
+}
+
+function calcTPC(p){return(p.hc||0)+(p.sc||0)+((p.rents||0)*(p.indemnity||0))}
+
+function renderBRTable(brs){
+  const sorted=[...brs].sort((a,b)=>{
+    let va=a[brSortKey]||'',vb=b[brSortKey]||'';
+    if(brSortKey==='tpc'){va=calcTPC(a);vb=calcTPC(b)}
+    if(typeof va==='number')return (va-vb)*brSortDir;
+    return va.localeCompare(vb)*brSortDir;
+  });
+  document.getElementById('brtbody').innerHTML=sorted.map(p=>`
+    <tr onclick="showDetail('br',${p.id})">
+      <td style="font-weight:600;color:var(--white)">${p.name}</td>
+      <td style="color:var(--mid)">${p.loc}</td>
+      <td><span class="cs ${SBMAP[p.stat]||''}" style="white-space:nowrap">${p.stat}</span></td>
+      <td>${p.carrier||'—'}</td>
+      <td class="tpc-val">${calcTPC(p)?fm(calcTPC(p)):'—'}</td>
+      <td class="prem-val">${p.premium?fm(p.premium):'—'}</td>
+      <td style="font-size:11px">${fd(p.estStart)||'—'}</td>
+      <td style="font-size:11px;color:var(--mid)">${p.policy&&p.policy!=='TBD'?p.policy:'—'}</td>
+      <td style="text-align:center">${p.ocip==='Yes'?'<span style="color:var(--teal-l)">✓</span>':'—'}</td>
+      <td style="font-size:11px;color:var(--rose-l);max-width:180px">${p.action||''}</td>
+    </tr>`).join('');
+  // Update sort icons
+  document.querySelectorAll('.brt th').forEach(th=>{th.classList.remove('sorted')});
+}
+
+function toggleBRView(){
+  brViewMode=brViewMode==='card'?'table':'card';
+  document.getElementById('br-view-toggle').textContent=brViewMode==='card'?'⊞ Table View':'⊟ Card View';
+  document.getElementById('br-card-view').style.display=brViewMode==='card'?'block':'none';
+  document.getElementById('br-table-view').style.display=brViewMode==='table'?'block':'none';
+  renderBR();
+}
+function sortBR(key){
+  if(brSortKey===key)brSortDir*=-1;else{brSortKey=key;brSortDir=1}
+  renderBR();
+}
+
+// BR DETAIL
+function showDetail(type,id){
+  prevView=curView;
+  if(type==='br'){
+    const p=ld(SK.br,[]).find(x=>x.id===id);if(!p)return;
+    const tpc=calcTPC(p);
+    const dsu=(p.rents||0)*(p.indemnity||0);
+    const log=ld(SK.log,[]).filter(e=>e.proj===p.name).sort((a,b)=>b.date.localeCompare(a.date));
+    document.getElementById('dcontent').innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div class="dname">${p.name}</div>
+          <div style="font-size:12px;color:var(--muted)">${p.loc} · ${p.type}${p.ocip==='Yes'?' · <span style="color:var(--teal-l)">OCIP Project</span>':''}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm" onclick="openLogModal()">+ Log Entry</button>
+          <button class="btn btn-sm btn-outline" onclick="openBRModal(${p.id})">Edit Project</button>
+          <button class="btn btn-sm btn-outline" onclick="window.print()">🖨 Print</button>
+        </div>
+      </div>
+      <span class="cs ${SBMAP[p.stat]||''}" style="margin-bottom:16px;display:inline-block">${p.stat}</span>
+
+      <div class="dst">Policy Information <div class="dst-line"></div></div>
+      <div class="prop-grid">
+        <div class="prop-field"><div class="prop-label">Carrier</div><div class="prop-value">${p.carrier||'TBD'}</div></div>
+        <div class="prop-field"><div class="prop-label">Policy #</div><div class="prop-value">${p.policy||'TBD'}</div></div>
+        <div class="prop-field"><div class="prop-label">Inception</div><div class="prop-value">${fd(p.inception)||'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">Expiry</div><div class="prop-value">${fd(p.expiry)||'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">Est. Start</div><div class="prop-value">${fd(p.estStart)||'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">Named Insureds</div><div class="prop-value" style="font-size:12px">${p.named||'—'}</div></div>
+      </div>
+
+      <div class="dst">Project Costs & TPC <div class="dst-line"></div></div>
+      <div class="prop-grid">
+        <div class="prop-field"><div class="prop-label">Hard Cost</div><div class="prop-value">${fm(p.hc)}</div></div>
+        <div class="prop-field"><div class="prop-label">Soft Cost</div><div class="prop-value">${fm(p.sc)}</div></div>
+        <div class="prop-field"><div class="prop-label">Annual Rents</div><div class="prop-value">${fm(p.rents)}</div></div>
+        <div class="prop-field"><div class="prop-label">Indemnity Period</div><div class="prop-value">${p.indemnity?p.indemnity+' mo':'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">DSU Value</div><div class="prop-value highlight">${fm(dsu)}</div></div>
+        <div class="prop-field" style="border:1px solid var(--teal-l)"><div class="prop-label">Total Project Cost</div><div class="prop-value highlight" style="font-size:16px">${fm(tpc)||'—'}</div></div>
+      </div>
+
+      <div class="dst">Coverage Details <div class="dst-line"></div></div>
+      <div class="prop-grid">
+        <div class="prop-field"><div class="prop-label">Annual Premium</div><div class="prop-value prem">${fm(p.premium)}</div></div>
+        <div class="prop-field"><div class="prop-label">Deductible</div><div class="prop-value">${p.ded||'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">Coverage Form</div><div class="prop-value">${p.covform||'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">DSU Quoted?</div><div class="prop-value">${p.dsu||'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">CAT / Flood Sub-limit</div><div class="prop-value" style="font-size:12px">${p.cat||'—'}</div></div>
+      </div>
+      ${p.notes?`<div style="background:var(--warm);border-radius:8px;padding:12px;font-size:12px;color:var(--mid);margin-bottom:16px">${p.notes}</div>`:''}
+
+      <div class="dst">Activity Log — ${p.name} <div class="dst-line"></div></div>
+      ${log.length?log.map(e=>`
+        <div class="dlr" onclick="openLogModal(${e.id})">
+          <div class="dld">
+            <span>${fd(e.date)}</span>
+            <span style="color:var(--mid)">${e.type}</span>
+            ${ab(e.await)}
+            <span class="s-${e.stat==='On Hold'?'ho':e.stat.toLowerCase().slice(0,2)}">${e.stat}</span>
+            ${e.stat!=='Closed'&&e.fu&&e.fu<new Date().toISOString().split('T')[0]?'<span class="overdue-badge">OVERDUE</span>':''}
+          </div>
+          <div class="dlw">${e.what}</div>
+          ${e.resp?`<div class="dln">↳ ${e.resp}</div>`:''}
+          ${e.notes?`<div class="dln">📌 ${e.notes}</div>`:''}
+        </div>`).join('')
+      :'<div style="color:var(--muted);font-size:12px;padding:8px 0">No log entries yet</div>'}
+    `;
+  } else if(type==='acq'){
+    const a=ld(SK.acq,[]).find(x=>x.id===id);if(!a)return;
+    document.getElementById('dcontent').innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div class="dname">${a.name}</div>
+          <div style="font-size:12px;color:var(--muted)">${a.addr} · ${a.type}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm" onclick="openLogModal()">+ Log Entry</button>
+          <button class="btn btn-sm btn-outline" onclick="openAcqModal(${a.id})">Edit</button>
+        </div>
+      </div>
+      <span class="cs cs-pro" style="margin-bottom:16px;display:inline-block">${a.stat}</span>
+      <div class="prop-grid">
+        <div class="prop-field"><div class="prop-label">Carrier</div><div class="prop-value">${a.carrier||'TBD'}</div></div>
+        <div class="prop-field"><div class="prop-label">Target Close</div><div class="prop-value">${fd(a.closeDate)||'—'}</div></div>
+        <div class="prop-field"><div class="prop-label">Property Policy</div><div class="prop-value">${a.prop}</div></div>
+        <div class="prop-field"><div class="prop-label">Casualty Policy</div><div class="prop-value">${a.cas}</div></div>
+        <div class="prop-field"><div class="prop-label">Environmental / PL</div><div class="prop-value">${a.env}</div></div>
+        <div class="prop-field"><div class="prop-label">Annual Premium</div><div class="prop-value prem">${fm(a.prem)}</div></div>
+      </div>
+      ${a.notes?`<div style="background:var(--warm);border-radius:8px;padding:12px;font-size:12px;color:var(--mid)">${a.notes}</div>`:''}
+    `;
+  }
+  sv('detail');
+}
+function backDetail(){sv(prevView)}
+
+// BR MODAL (TPC needs function for cards)
+// TPC is calculated inline via calcTPC(p)
+
+// ═══════════════════════════════════════════════════
+// BR MODAL
+// ═══════════════════════════════════════════════════
+function openBRModal(id){
+  editBRId=id||null;
+  document.getElementById('brmt').textContent=id?'Edit BR Project':'New BR Project';
+  document.getElementById('brdelbtn').style.display=id?'block':'none';
+  if(id){
+    const p=ld(SK.br,[]).find(x=>x.id===id);
+    if(p){
+      ['brname','brloc','brcarrier','brpolicy','brinception','brexpiry','breststart',
+       'brnamed','brhc','brsc','brrents','brindemnity','brded','brprem','brcat','brnotes','braction'].forEach(fid=>{
+        const key=fid.replace('br','').toLowerCase();
+        const map={name:'name',loc:'loc',carrier:'carrier',policy:'policy',inception:'inception',
+          expiry:'expiry',eststart:'estStart',named:'named',hc:'hc',sc:'sc',rents:'rents',
+          indemnity:'indemnity',ded:'ded',prem:'premium',cat:'cat',notes:'notes',action:'action'};
+        document.getElementById(fid).value=p[map[key]]||'';
+      });
+      document.getElementById('brtype').value=p.type||'Industrial - Warehouse';
+      document.getElementById('brstat').value=p.stat||'Prospective';
+      document.getElementById('brcovform').value=p.covform||'Special Form';
+      document.getElementById('brdsu').value=p.dsu||'Pending';
+      document.getElementById('brocip').value=p.ocip||'No';
+    }
+  }else{
+    ['brname','brloc','brcarrier','brpolicy','brinception','brexpiry','breststart',
+     'brnamed','brhc','brsc','brrents','brindemnity','brded','brprem','brcat','brnotes','braction'].forEach(fid=>document.getElementById(fid).value='');
+    document.getElementById('brstat').value='Prospective';
+    document.getElementById('brocip').value='No';
+    document.getElementById('brdsu').value='Pending';
+  }
+  document.getElementById('brmo').classList.add('open');
+}
+function closeBRmo(){document.getElementById('brmo').classList.remove('open');editBRId=null}
+function saveBR(){
+  const name=document.getElementById('brname').value.trim();if(!name)return;
+  const brs=ld(SK.br,[]);
+  const p={id:editBRId||Date.now(),name,
+    loc:document.getElementById('brloc').value,type:document.getElementById('brtype').value,
+    stat:document.getElementById('brstat').value,carrier:document.getElementById('brcarrier').value||'TBD',
+    policy:document.getElementById('brpolicy').value||'TBD',
+    inception:document.getElementById('brinception').value,expiry:document.getElementById('brexpiry').value,
+    estStart:document.getElementById('breststart').value,named:document.getElementById('brnamed').value,
+    hc:Number(document.getElementById('brhc').value)||0,sc:Number(document.getElementById('brsc').value)||0,
+    rents:Number(document.getElementById('brrents').value)||0,indemnity:Number(document.getElementById('brindemnity').value)||0,
+    ded:document.getElementById('brded').value,covform:document.getElementById('brcovform').value,
+    premium:Number(document.getElementById('brprem').value)||0,dsu:document.getElementById('brdsu').value,
+    ocip:document.getElementById('brocip').value,cat:document.getElementById('brcat').value,
+    notes:document.getElementById('brnotes').value,action:document.getElementById('braction').value};
+  if(editBRId){const i=brs.findIndex(x=>x.id===editBRId);if(i>=0)brs[i]=p}else brs.push(p);
+  sv2(SK.br,brs);closeBRmo();rebuildAllDropdowns();renderBR();renderDash();
+}
+function delBR(){if(!confirm('Delete this project?'))return;sv2(SK.br,ld(SK.br,[]).filter(x=>x.id!==editBRId));closeBRmo();rebuildAllDropdowns();renderBR()}
+
+// ═══════════════════════════════════════════════════
+// ACQUISITIONS
+// ═══════════════════════════════════════════════════
+function renderAcq(){
+  document.getElementById('acqgrid').innerHTML=ld(SK.acq,[]).map(a=>`
+    <div class="card" onclick="showDetail('acq',${a.id})">
+      <div class="cn">${a.name}</div>
+      <div class="cl2">${a.addr} · ${a.type}</div>
+      <span class="cs cs-pro">${a.stat}</span>
+      <div class="cd">
+        <div class="cd-r"><span class="cd-l">Carrier</span><span class="cd-v">${a.carrier}</span></div>
+        <div class="cd-r"><span class="cd-l">Property</span><span class="cd-v">${a.prop}</span></div>
+        <div class="cd-r"><span class="cd-l">Casualty</span><span class="cd-v">${a.cas}</span></div>
+        <div class="cd-r"><span class="cd-l">Environmental</span><span class="cd-v">${a.env}</span></div>
+        ${a.prem?`<div class="cd-r"><span class="cd-l">Premium</span><span class="cd-v" style="color:var(--sage-l)">${fm(a.prem)}</span></div>`:''}
+      </div>
+      ${a.notes?`<div class="ca w">${a.notes}</div>`:''}
+    </div>`).join('');
+}
+function openAcqModal(id){
+  editAcqId=id||null;
+  document.getElementById('acqmt').textContent=id?'Edit Acquisition':'New Acquisition';
+  document.getElementById('acqdelbtn').style.display=id?'block':'none';
+  if(id){
+    const a=ld(SK.acq,[]).find(x=>x.id===id);
+    if(a){
+      document.getElementById('acqname').value=a.name||'';document.getElementById('acqaddr').value=a.addr||'';
+      document.getElementById('acqtype').value=a.type||'Industrial';document.getElementById('acqstat').value=a.stat||'Prospective';
+      document.getElementById('acqclose').value=a.closeDate||'';document.getElementById('acqcarrier').value=a.carrier||'';
+      document.getElementById('acqprem').value=a.prem||'';document.getElementById('acqprop').value=a.prop||'TBD';
+      document.getElementById('acqcas').value=a.cas||'TBD';document.getElementById('acqenv').value=a.env||'TBD';
+      document.getElementById('acqnotes').value=a.notes||'';
+    }
+  }else{
+    ['acqname','acqaddr','acqcarrier','acqprem','acqclose','acqnotes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('acqstat').value='Prospective';document.getElementById('acqprop').value='TBD';
+    document.getElementById('acqcas').value='TBD';document.getElementById('acqenv').value='TBD';
+  }
+  document.getElementById('acqmo').classList.add('open');
+}
+function closeAcqmo(){document.getElementById('acqmo').classList.remove('open');editAcqId=null}
+function saveAcq(){
+  const name=document.getElementById('acqname').value.trim();if(!name)return;
+  const acqs=ld(SK.acq,[]);
+  const a={id:editAcqId||Date.now(),name,addr:document.getElementById('acqaddr').value,
+    type:document.getElementById('acqtype').value,stat:document.getElementById('acqstat').value,
+    closeDate:document.getElementById('acqclose').value,carrier:document.getElementById('acqcarrier').value||'TBD',
+    prem:Number(document.getElementById('acqprem').value)||0,prop:document.getElementById('acqprop').value,
+    cas:document.getElementById('acqcas').value,env:document.getElementById('acqenv').value,
+    notes:document.getElementById('acqnotes').value};
+  if(editAcqId){const i=acqs.findIndex(x=>x.id===editAcqId);if(i>=0)acqs[i]=a}else acqs.push(a);
+  sv2(SK.acq,acqs);closeAcqmo();rebuildAllDropdowns();renderAcq();
+}
+function delAcq(){if(!confirm('Delete?'))return;sv2(SK.acq,ld(SK.acq,[]).filter(x=>x.id!==editAcqId));closeAcqmo();renderAcq()}
+
+// ═══════════════════════════════════════════════════
+// RENEWALS
+// ═══════════════════════════════════════════════════
+function renderRenewals(){
+  const rn=ld(SK.renewals,[]).sort((a,b)=>{
+    const da=daysUntil(a.expiry),db=daysUntil(b.expiry);
+    if(da===null)return 1;if(db===null)return-1;return da-db;
+  });
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('rntbody').innerHTML=rn.map(r=>{
+    const days=daysUntil(r.expiry);
+    let daysPill='';
+    if(days!==null){
+      const cls=days<0?'days-red':days<=30?'days-red':days<=90?'days-amber':days<=180?'days-amber':'days-green';
+      daysPill=`<span class="days-pill ${cls}">${days<0?'EXPIRED':days+' days'}</span>`;
+    }
+    return`<tr class="rn-row" onclick="openRenewalModal(${r.id})">
+      <td style="font-weight:600;color:var(--white)">${r.line}</td>
+      <td style="color:var(--mid)">${r.carrier}</td>
+      <td style="font-size:11px;color:var(--muted)">${r.policy}</td>
+      <td style="white-space:nowrap">${fd(r.expiry)||'—'}</td>
+      <td>${daysPill||'—'}</td>
+      <td style="white-space:nowrap;font-size:11px">${fd(r.target)||'—'}</td>
+      <td><span class="s-${r.stat==='Not Started'?'ho':r.stat==='Complete'?'cl':'op'}">${r.stat}</span></td>
+      <td>${r.prem?fm(r.prem):'—'}</td>
+      <td style="font-size:11px;color:var(--mid);max-width:160px">${r.notes}</td>
+    </tr>`;
+  }).join('');
+}
+function openRenewalModal(id){
+  editRnId=id||null;
+  document.getElementById('rnmt').textContent=id?'Edit Policy Line':'New Policy Line';
+  document.getElementById('rndelbtn').style.display=id?'block':'none';
+  if(id){
+    const r=ld(SK.renewals,[]).find(x=>x.id===id);
+    if(r){
+      document.getElementById('rnline').value=r.line||'';document.getElementById('rncarrier').value=r.carrier||'';
+      document.getElementById('rnbroker').value=r.broker||'Marsh';document.getElementById('rnpolicy').value=r.policy||'';
+      document.getElementById('rnprem').value=r.prem||'';document.getElementById('rnexpiry').value=r.expiry||'';
+      document.getElementById('rntarget').value=r.target||'';document.getElementById('rnstat').value=r.stat||'Not Started';
+      document.getElementById('rnnotes').value=r.notes||'';
+    }
+  }else{
+    ['rnline','rncarrier','rnpolicy','rnprem','rnexpiry','rntarget','rnnotes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('rnbroker').value='Marsh';document.getElementById('rnstat').value='Not Started';
+  }
+  document.getElementById('rnmo').classList.add('open');
+}
+function closeRnmo(){document.getElementById('rnmo').classList.remove('open');editRnId=null}
+function saveRenewal(){
+  const line=document.getElementById('rnline').value.trim();if(!line)return;
+  const rn=ld(SK.renewals,[]);
+  const r={id:editRnId||Date.now(),line,carrier:document.getElementById('rncarrier').value,
+    broker:document.getElementById('rnbroker').value,policy:document.getElementById('rnpolicy').value,
+    prem:Number(document.getElementById('rnprem').value)||0,expiry:document.getElementById('rnexpiry').value,
+    target:document.getElementById('rntarget').value,stat:document.getElementById('rnstat').value,
+    notes:document.getElementById('rnnotes').value};
+  if(editRnId){const i=rn.findIndex(x=>x.id===editRnId);if(i>=0)rn[i]=r}else rn.push(r);
+  sv2(SK.renewals,rn);closeRnmo();renderRenewals();renderDash();
+}
+function delRenewal(){if(!confirm('Delete?'))return;sv2(SK.renewals,ld(SK.renewals,[]).filter(x=>x.id!==editRnId));closeRnmo();renderRenewals()}
+
+// ═══════════════════════════════════════════════════
+// NOTES
+// ═══════════════════════════════════════════════════
+function renderNotes(){
+  const notes=ld(SK.notes,[]);
+  const q=(document.getElementById('nsearch').value||'').toLowerCase();
+  const cat=document.getElementById('nfcat').value;
+  let filtered=notes.filter(n=>{
+    if(cat&&n.cat!==cat)return false;
+    if(q&&!(n.title+n.body+(n.proj||'')+(n.actions||'')).toLowerCase().includes(q))return false;
+    return true;
+  }).sort((a,b)=>b.date.localeCompare(a.date));
+  const list=document.getElementById('noteslist');
+  document.getElementById('notese').style.display=filtered.length?'none':'block';
+  list.innerHTML=filtered.map(n=>`
+    <div class="note-card" onclick="showNoteDetail(${n.id})">
+      <div class="note-hdr">
+        <div class="note-title">${n.title}</div>
+        <div class="note-meta">${fd(n.date)}</div>
+      </div>
+      <div class="note-tags">
+        <span class="tag ${tcls(n.cat)}">${n.cat}</span>
+        ${n.proj?`<span class="tag t-ge">${n.proj}</span>`:''}
+      </div>
+      <div class="note-body">${n.body||''}</div>
+    </div>`).join('');
+}
+function openNoteModal(id){
+  editNoteId=id||null;
+  document.getElementById('nmt').textContent=id?'Edit Note':'New Meeting Note';
+  document.getElementById('ndelbtn').style.display=id?'block':'none';
+  if(id){
+    const n=ld(SK.notes,[]).find(x=>x.id===id);
+    if(n){document.getElementById('ndate').value=n.date;document.getElementById('ntitle').value=n.title;
+      document.getElementById('nproj').value=n.proj||'';document.getElementById('ncat2').value=n.cat;
+      document.getElementById('nbody').value=n.body||'';document.getElementById('nactions').value=n.actions||'';}
+  }else{
+    document.getElementById('ntitle').value='';document.getElementById('nbody').value='';document.getElementById('nactions').value='';
+    document.getElementById('ndate').value=new Date().toISOString().split('T')[0];
+  }
+  document.getElementById('nmo').classList.add('open');
+}
+function closeNmo(){document.getElementById('nmo').classList.remove('open');editNoteId=null}
+function saveNote(){
+  const title=document.getElementById('ntitle').value.trim();if(!title)return;
+  const notes=ld(SK.notes,[]);
+  const n={id:editNoteId||Date.now(),date:document.getElementById('ndate').value,title,
+    proj:document.getElementById('nproj').value,cat:document.getElementById('ncat2').value,
+    body:document.getElementById('nbody').value,actions:document.getElementById('nactions').value};
+  if(editNoteId){const i=notes.findIndex(x=>x.id===editNoteId);if(i>=0)notes[i]=n}else notes.push(n);
+  sv2(SK.notes,notes);closeNmo();renderNotes();
+  if(n.actions&&n.actions.trim()){
+    const tasks=ld(SK.tasks,[]);
+    n.actions.split('\n').filter(l=>l.trim()).forEach(l=>tasks.push({id:Date.now()+Math.random(),task:l.trim(),cat:n.cat,pri:'Medium',done:false}));
+    sv2(SK.tasks,tasks);renderToday();
+  }
+}
+function delNote(){if(!confirm('Delete?'))return;sv2(SK.notes,ld(SK.notes,[]).filter(x=>x.id!==editNoteId));closeNmo();renderNotes()}
+function showNoteDetail(id){
+  const n=ld(SK.notes,[]).find(x=>x.id===id);if(!n)return;
+  document.getElementById('ndcontent').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+      <div><div class="dname">${n.title}</div>
+      <div style="font-size:12px;color:var(--muted)">${fd(n.date)} · ${n.cat}${n.proj?' · '+n.proj:''}</div></div>
+      <button class="btn btn-sm btn-outline" onclick="openNoteModal(${n.id})">Edit</button>
+    </div>
+    ${n.body?`<div class="dst">Notes <div class="dst-line"></div></div><div class="note-full">${n.body}</div>`:''}
+    ${n.actions?`<div class="dst" style="margin-top:16px">Action Items <div class="dst-line"></div></div><div class="note-full">${n.actions}</div>`:''}
+  `;
+  sv('notedetail');
+}
+
+// ═══════════════════════════════════════════════════
+// GLOBAL SEARCH
+// ═══════════════════════════════════════════════════
+function globalSearch(q){
+  const res=document.getElementById('gsearch-results');
+  if(!q||q.length<2){res.classList.remove('open');return}
+  const ql=q.toLowerCase();
+  let results=[];
+  // Search log
+  ld(SK.log,[]).filter(e=>(e.what+e.proj+e.notes+e.resp).toLowerCase().includes(ql)).slice(0,4).forEach(e=>{
+    results.push({type:'Log Entry',title:e.proj+' — '+e.what.substring(0,50),action:()=>{openLogModal(e.id)}});
+  });
+  // Search BR
+  ld(SK.br,[]).filter(p=>(p.name+p.loc+p.carrier).toLowerCase().includes(ql)).slice(0,3).forEach(p=>{
+    results.push({type:'BR Project',title:p.name+' ('+p.stat+')',action:()=>{sv('projects');setTimeout(()=>showDetail('br',p.id),100)}});
+  });
+  // Search notes
+  ld(SK.notes,[]).filter(n=>(n.title+n.body+(n.proj||'')).toLowerCase().includes(ql)).slice(0,3).forEach(n=>{
+    results.push({type:'Meeting Note',title:n.title,action:()=>{sv('notes');setTimeout(()=>showNoteDetail(n.id),100)}});
+  });
+  // Search acq
+  ld(SK.acq,[]).filter(a=>(a.name+a.addr+a.notes).toLowerCase().includes(ql)).slice(0,2).forEach(a=>{
+    results.push({type:'Acquisition',title:a.name,action:()=>{sv('acquisitions');setTimeout(()=>showDetail('acq',a.id),100)}});
+  });
+  if(!results.length){res.classList.remove('open');return}
+  res.innerHTML=results.map((r,i)=>`<div class="sr-item" onclick="searchGo(${i})"><div class="sr-type">${r.type}</div>${r.title}</div>`).join('');
+  res.classList.add('open');
+  res._actions=results.map(r=>r.action);
+}
+function searchGo(i){
+  const res=document.getElementById('gsearch-results');
+  if(res._actions&&res._actions[i])res._actions[i]();
+  res.classList.remove('open');
+  document.getElementById('gsearch').value='';
+}
+function closeSearch(){document.getElementById('gsearch-results').classList.remove('open')}
+
+// ═══════════════════════════════════════════════════
+// PHOTO CAPTURE
+// ═══════════════════════════════════════════════════
+function openPhotoModal(target){
+  photoTarget=target;photoText='';
+  document.getElementById('pimg').style.display='none';
+  document.getElementById('pproc').style.display='none';
+  document.getElementById('pres').style.display='none';
+  document.getElementById('paddbtn').style.display='none';
+  document.getElementById('paddbtn').textContent=target==='note'?'Create Note':'Add to Inbox';
+  document.getElementById('pmo').classList.add('open');
+}
+function closePmo(){document.getElementById('pmo').classList.remove('open')}
+async function handlePhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async(ev)=>{
+    const img=document.getElementById('pimg');img.src=ev.target.result;img.style.display='block';
+    document.getElementById('pproc').style.display='block';
+    document.getElementById('pres').style.display='none';
+    document.getElementById('paddbtn').style.display='none';
+    try{
+      const b64=ev.target.result.split(',')[1];
+      const resp=await fetch('https://url.us.m.mimecastprotect.com/s/14PhCBBj88Hn8NxofzfAS2uWg7?domain=api.anthropic.com',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+          messages:[{role:'user',content:[
+            {type:'image',source:{type:'base64',media_type:file.type,data:b64}},
+            {type:'text',text:'Transcribe these handwritten notes exactly. Use - for checkbox/bullet items. Keep it clean and readable.'}
+          ]}]})});
+      const data=await resp.json();
+      photoText=data.content?.find(c=>c.type==='text')?.text||'Could not read image.';
+      document.getElementById('pproc').style.display='none';
+      document.getElementById('pres').style.display='block';document.getElementById('pres').textContent=photoText;
+      document.getElementById('paddbtn').style.display='block';
+    }catch{
+      document.getElementById('pproc').style.display='none';
+      document.getElementById('pres').style.display='block';document.getElementById('pres').textContent='Error reading image.';
+    }
+  };
+  reader.readAsDataURL(file);e.target.value='';
+}
+function addPhotoToTarget(){
+  if(!photoText)return;
+  if(photoTarget==='note'){document.getElementById('nbody').value=photoText;closePmo();openNoteModal()}
+  else{
+    const inbox=ld(SK.inbox,[]);
+    inbox.unshift({id:Date.now(),text:'📷 '+photoText.substring(0,300),time:new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})});
+    sv2(SK.inbox,inbox);closePmo();renderInbox();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// MANAGE LISTS
+// ═══════════════════════════════════════════════════
+function getCustomLists(){return ld(SK.custom,{proj:[],cat:[],type:[]})}
+function openManageLists(){renderCustomLists();document.getElementById('mlmo').classList.add('open')}
+function renderCustomLists(){
+  const lists=getCustomLists();
+  ['proj','cat','type'].forEach(key=>{
+    const c=document.getElementById('ml-'+key+'-list');if(!c)return;
+    c.innerHTML=lists[key].length?lists[key].map(item=>`
+      <span style="display:inline-flex;align-items:center;gap:4px;background:var(--warm);color:var(--charcoal);padding:3px 9px;border-radius:7px;font-size:11px">
+        ${item}<span onclick="removeCustomOption('${key}','${item.replace(/'/g,"\\'")}');event.stopPropagation()" style="cursor:pointer;color:var(--muted);margin-left:2px">✕</span>
+      </span>`).join(''):'<span style="font-size:11px;color:var(--muted)">None added yet</span>';
+  });
+}
+function addCustomOption(key){
+  const input=document.getElementById('ml-'+key);const val=input.value.trim();if(!val)return;
+  const lists=getCustomLists();
+  if(!lists[key].includes(val)){lists[key].push(val);sv2(SK.custom,lists);rebuildAllDropdowns()}
+  input.value='';renderCustomLists();
+}
+function removeCustomOption(key,val){
+  const lists=getCustomLists();lists[key]=lists[key].filter(x=>x!==val);
+  sv2(SK.custom,lists);rebuildAllDropdowns();renderCustomLists();
+}
+function rebuildAllDropdowns(){
+  const lists=getCustomLists();
+  rebuildProjDropdowns(lists.proj);
+  rebuildCatDropdowns(lists.cat);
+}
+function rebuildProjDropdowns(customProjs){
+  const brNames=ld(SK.br,[]).map(p=>p.name);
+  const acqNames=ld(SK.acq,[]).map(a=>a.name);
+  const base=['Fontana B6','LAX01','LAX02','LAX03','Cypress B3','Lehigh Valley West','Jersey City','Queens','Northtown','Milpitas','Project Explorer','Schmoyer','Bellwether','General'];
+  const combined=[...new Set([...base,...brNames,...acqNames,...(customProjs||[])])];
+  ['fp','lp2','nproj'].forEach(selId=>{
+    const sel=document.getElementById(selId);if(!sel)return;
+    const cur=sel.value;const first=sel.options[0];
+    const isFilter=first&&(first.value===''||first.textContent.startsWith('All'));
+    sel.innerHTML='';if(isFilter)sel.appendChild(first);
+    combined.forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name;sel.appendChild(o)});
+    if(cur)sel.value=cur;
+  });
+}
+function rebuildCatDropdowns(customCats){
+  const base=['Builders Risk','OCIP','Acquisitions','Contract Review','COI Compliance','Renewals','Solar Works','CAPEx Works','Admin / Process','General'];
+  const all=[...new Set([...base,...(customCats||[])])];
+  ['lc2','ncat2','fc','nfcat','tcat'].forEach(selId=>{
+    const sel=document.getElementById(selId);if(!sel)return;
+    const cur=sel.value;const first=sel.options[0];
+    const isFilter=first&&(first.value===''||first.textContent.startsWith('All'));
+    sel.innerHTML='';if(isFilter)sel.appendChild(first);
+    all.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o)});
+    if(cur)sel.value=cur;
+  });
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.mo').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')})});
+</script>
+</body>
+</html>
+
