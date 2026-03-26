@@ -1660,7 +1660,7 @@ async function handlePhoto(e){
     document.getElementById('pproc').style.display='block';
     try{
       const b64=ev.target.result.split(',')[1];
-      const resp=await fetch('https://url.us.m.mimecastprotect.com/s/7iPvCYENQQu95nxgH0fvSxA8QS?domain=api.anthropic.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type,data:b64}},{type:'text',text:'Transcribe these handwritten notes exactly. Use - for checkbox/bullet items. Keep it clean and readable.'}]}]})});
+      const resp=await fetch('https://url.us.m.mimecastprotect.com/s/gav8C2kQggsmA6x1infXS5gm3M?domain=api.anthropic.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type,data:b64}},{type:'text',text:'Transcribe these handwritten notes exactly. Use - for checkbox/bullet items. Keep it clean and readable.'}]}]})});
       const data=await resp.json();
       photoText=data.content?.find(c=>c.type==='text')?.text||'Could not read image.';
       document.getElementById('pproc').style.display='none';document.getElementById('pres').style.display='block';document.getElementById('pres').textContent=photoText;document.getElementById('paddbtn').style.display='block';
