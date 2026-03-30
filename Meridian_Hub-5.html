@@ -934,46 +934,52 @@ body{font-family:'DM Sans',sans-serif;background:var(--oat);color:var(--charcoal
 
 <!-- LOG MODAL -->
 <div class="mo" id="lmo">
-  <div class="md">
+  <div class="md md-lg">
     <div class="mt" id="lmt">New Log Entry</div>
     <div class="fr2">
       <div class="fr"><label class="fl">Date</label><input type="date" class="fi" id="ld"></div>
       <div class="fr"><label class="fl">Property</label><select class="fse" id="lp2"></select></div>
     </div>
     <div class="fr2">
-      <div class="fr"><label class="fl">Category</label>
-        <div class="fse-wrap"><select class="fse" id="lcat"></select><button class="edit-list-btn" onclick="openListPopover('lcat','cat',this)" title="Edit category options">✏️</button></div>
+      <div class="fr">
+        <label class="fl">Category <button class="edit-list-btn" onclick="openListPopover('lcat','cat',this)">✏️</button></label>
+        <select class="fse" id="lcat"></select>
       </div>
-      <div class="fr"><label class="fl">Update Type</label>
-        <div class="fse-wrap"><select class="fse" id="ltype">
-        <option>Submission</option><option>Follow-Up</option><option>Broker Q&A</option>
-        <option>Team Response</option><option>Quote Received</option><option>Bind Order</option>
-        <option>Policy Issued</option><option>Meeting</option><option>Admin / Process</option><option>Other</option>
-      </select></div>
+      <div class="fr">
+        <label class="fl">Update Type <button class="edit-list-btn" onclick="openListPopover('ltype','type',this)">✏️</button></label>
+        <select class="fse" id="ltype">
+          <option>Submission</option><option>Follow-Up</option><option>Broker Q&A</option>
+          <option>Team Response</option><option>Quote Received</option><option>Bind Order</option>
+          <option>Policy Issued</option><option>Meeting</option><option>Admin / Process</option><option>Other</option>
+        </select>
+      </div>
     </div>
     <div class="fr"><label class="fl">What Was Sent / Done</label><textarea class="fta" id="lwhat" placeholder="Describe what happened..."></textarea></div>
     <div class="fr"><label class="fl">Response / Notes from Other Party</label><textarea class="fta" id="lresp" placeholder="What did they say?" style="min-height:60px"></textarea></div>
     <div class="fr2">
-      <div class="fr"><label class="fl">Awaiting From</label>
-        <div class="fse-wrap"><select class="fse" id="lawait">
-        <option>Internal Team</option><option>Broker / Marsh</option><option>Development Team</option>
-        <option>Legal</option><option>Carrier</option><option>Management</option>
-        <option>External Party</option><option>N/A</option>
-      </select></div>
+      <div class="fr">
+        <label class="fl">Awaiting From <button class="edit-list-btn" onclick="openListPopover('lawait','await',this)">✏️</button></label>
+        <select class="fse" id="lawait">
+          <option>Internal Team</option><option>Broker / Marsh</option><option>Development Team</option>
+          <option>Property Management Team</option><option>Myself / Amanda</option>
+          <option>Legal</option><option>Title / Legal</option><option>Carrier</option>
+          <option>Management</option><option>Tenant</option><option>External Party</option><option>N/A</option>
+        </select>
+      </div>
       <div class="fr"><label class="fl">Follow-Up Date</label><input type="date" class="fi" id="lfu"></div>
     </div>
     <div class="fr2">
       <div class="fr"><label class="fl">Priority</label><select class="fse" id="lpri"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
       <div class="fr"><label class="fl">Status</label><select class="fse" id="lstat"><option>Draft</option><option selected>Open</option><option>On Hold</option><option>Closed</option></select></div>
     </div>
-    <div class="fr"><label class="fl">Notes</label><input type="text" class="fi" id="lnotes"></div>
+    <div class="fr"><label class="fl">Notes</label><input type="text" class="fi" id="lnotes" placeholder="Any additional context..."></div>
     <div class="fr">
-      <label class="fl">Attachments — paste screenshot, drag image, or click to upload</label>
-      <div class="attach-zone" id="attach-zone" onclick="document.getElementById('attach-file').click()" 
+      <label class="fl">Attachments — paste screenshot (Ctrl+V), drag &amp; drop, or click to upload</label>
+      <div class="attach-zone" id="attach-zone" onclick="document.getElementById('attach-file').click()"
            ondragover="event.preventDefault();this.classList.add('drag-over')"
            ondragleave="this.classList.remove('drag-over')"
            ondrop="handleAttachDrop(event)">
-        📎 Click to attach file or image — or paste a screenshot (Ctrl+V)
+        📎 Click to attach · Drag &amp; drop · Paste screenshot (Ctrl+V)
       </div>
       <input type="file" id="attach-file" accept="image/*,.pdf" multiple style="display:none" onchange="handleAttachFile(event)">
       <div class="attach-list" id="attach-list"></div>
@@ -2302,7 +2308,7 @@ async function handlePhoto(e){
     document.getElementById('pproc').style.display='block';
     try{
       const b64=ev.target.result.split(',')[1];
-      const resp=await fetch('https://url.us.m.mimecastprotect.com/s/TqLkC9rPppiOVqg3uofRSqlrj4?domain=api.anthropic.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type,data:b64}},{type:'text',text:'Transcribe these handwritten notes exactly. Use - for checkbox/bullet items. Keep it clean and readable.'}]}]})});
+      const resp=await fetch('https://url.us.m.mimecastprotect.com/s/8tjAClYNvvCMqE8VsGfrSzwzLq?domain=api.anthropic.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type,data:b64}},{type:'text',text:'Transcribe these handwritten notes exactly. Use - for checkbox/bullet items. Keep it clean and readable.'}]}]})});
       const data=await resp.json();
       photoText=data.content?.find(c=>c.type==='text')?.text||'Could not read image.';
       document.getElementById('pproc').style.display='none';document.getElementById('pres').style.display='block';document.getElementById('pres').textContent=photoText;document.getElementById('paddbtn').style.display='block';
