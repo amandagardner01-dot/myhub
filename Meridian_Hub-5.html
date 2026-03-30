@@ -439,6 +439,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--oat);color:var(--charcoal
 .note-tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;background:var(--lilac-p);color:var(--plum-p);cursor:pointer;transition:background .1s;margin:2px}
 .note-tag:hover{background:var(--lilac)}
 
+/* MULTI-SELECT STATUS FILTER */
+.ms-filter{position:relative;display:inline-block}
+.ms-filter-btn{border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-family:"DM Sans",sans-serif;font-size:11.5px;background:var(--card);color:var(--charcoal);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;min-width:140px;justify-content:space-between}
+.ms-filter-btn:hover{border-color:var(--plum-p)}
+.ms-filter-btn.active{border-color:var(--lilac)}
+.ms-filter-arrow{font-size:9px;color:var(--muted)}
+.ms-dropdown{position:absolute;top:calc(100% + 4px);left:0;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:var(--sh-lg);z-index:200;min-width:160px;padding:6px 0;display:none}
+.ms-dropdown.open{display:block}
+.ms-option{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:12px;transition:background .1s}
+.ms-option:hover{background:var(--warm)}
+.ms-checkbox{width:14px;height:14px;border:2px solid var(--border);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ms-checkbox.checked{background:var(--lilac);border-color:var(--lilac)}
+.ms-checkbox.checked::after{content:'✓';font-size:9px;color:white;font-weight:700}
+.ms-divider{height:1px;background:var(--border);margin:4px 0}
+.ms-clear{padding:6px 14px;font-size:11px;color:var(--muted);cursor:pointer;text-align:center}
+.ms-clear:hover{color:var(--plum-p)}
+
+/* TOAST NOTIFICATION */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:12px;color:var(--charcoal);box-shadow:var(--sh-lg);z-index:600;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
 /* KEYBOARD SHORTCUT HINT */
 .kb-hint{position:fixed;bottom:16px;right:16px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:11px;color:var(--muted);z-index:50;opacity:0;transition:opacity .3s;pointer-events:none}
 .kb-hint.show{opacity:1}
@@ -480,11 +501,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--oat);color:var(--charcoal
     <div class="search-results" id="gsearch-res"></div>
   </div>
   <div class="tb-nav">
-    <button class="nb active" onclick="sv('properties')">Properties</button>
-    <button class="nb" onclick="sv('log')">Activity Log</button>
-    <button class="nb" onclick="sv('renewals')">Renewals</button>
-    <button class="nb" onclick="sv('vendors')">Modern Slavery</button>
-    <button class="nb" onclick="sv('entities')">Entities</button>
     <button class="nb" onclick="sv('log')">Activity Log</button>
     <button class="nb" onclick="sv('properties')">Properties</button>
     <button class="nb" onclick="sv('acquisitions')">Acquisitions</button>
@@ -591,11 +607,30 @@ body{font-family:'DM Sans',sans-serif;background:var(--oat);color:var(--charcoal
       <div class="vt">Activity Log</div>
       <div class="vs">Everything in one place. Right-click any row to quickly change status.</div>
       <div class="btn-row">
-        <select class="fsel" id="lf-stat" onchange="renderLog()">
-          <option value="Open" selected>Open</option>
-          <option value="">All</option><option value="Draft">Draft</option>
-          <option value="On Hold">On Hold</option><option value="Closed">Closed</option>
-        </select>
+        <div class="ms-filter" id="status-filter-wrap">
+          <button class="ms-filter-btn active" id="status-filter-btn" onclick="toggleStatusFilter(event)">
+            <span id="status-filter-label">Open + Draft</span>
+            <span class="ms-filter-arrow">▾</span>
+          </button>
+          <div class="ms-dropdown" id="status-dropdown">
+            <div class="ms-option" onclick="toggleStatusOption('Open')">
+              <div class="ms-checkbox checked" id="chk-Open"></div><span>Open</span>
+            </div>
+            <div class="ms-option" onclick="toggleStatusOption('Draft')">
+              <div class="ms-checkbox checked" id="chk-Draft"></div><span>Draft</span>
+            </div>
+            <div class="ms-option" onclick="toggleStatusOption('On Hold')">
+              <div class="ms-checkbox" id="chk-On Hold"></div><span>On Hold</span>
+            </div>
+            <div class="ms-divider"></div>
+            <div class="ms-option" onclick="toggleStatusOption('Closed')">
+              <div class="ms-checkbox" id="chk-Closed"></div><span>Closed</span>
+            </div>
+            <div class="ms-divider"></div>
+            <div class="ms-clear" onclick="selectAllStatuses()">Select All</div>
+            <div class="ms-clear" onclick="resetStatusFilter()">Reset to Default</div>
+          </div>
+        </div>
         <select class="fsel" id="lf-cat" onchange="renderLog()">
           <option value="">All Categories</option>
           <option>Builders Risk</option><option>OCIP</option><option>Acquisitions</option>
@@ -802,6 +837,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--oat);color:var(--charcoal
 </div>
 
 <!-- CTX MENU -->
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <!-- KEYBOARD SHORTCUT HINT -->
 <div class="kb-hint" id="kb-hint"></div>
 
@@ -1415,6 +1453,72 @@ function jumpToProperty(code){
   else{sv('properties');document.getElementById('pf-search').value=code;renderProps()}
 }
 
+// ═══════════════════════════════════════
+// MULTI-SELECT STATUS FILTER
+// ═══════════════════════════════════════
+let activeStatuses=['Open','Draft']; // default
+
+function getActiveStatuses(){return activeStatuses}
+
+function toggleStatusFilter(e){
+  e.stopPropagation();
+  const dd=document.getElementById('status-dropdown');
+  dd.classList.toggle('open');
+}
+function toggleStatusOption(status){
+  const idx=activeStatuses.indexOf(status);
+  if(idx>=0)activeStatuses.splice(idx,1);
+  else activeStatuses.push(status);
+  updateStatusFilterUI();
+  renderLog();
+}
+function selectAllStatuses(){
+  activeStatuses=['Open','Draft','On Hold','Closed'];
+  updateStatusFilterUI();renderLog();
+}
+function resetStatusFilter(){
+  activeStatuses=['Open','Draft'];
+  updateStatusFilterUI();renderLog();
+}
+function updateStatusFilterUI(){
+  // Update checkboxes
+  ['Open','Draft','On Hold','Closed'].forEach(s=>{
+    const el=document.getElementById('chk-'+s);
+    if(el)el.className='ms-checkbox'+(activeStatuses.includes(s)?' checked':'');
+  });
+  // Update label
+  const label=document.getElementById('status-filter-label');
+  if(label){
+    if(activeStatuses.length===0)label.textContent='None selected';
+    else if(activeStatuses.length===4)label.textContent='All Statuses';
+    else label.textContent=activeStatuses.join(' + ');
+  }
+  // Update button active state
+  const btn=document.getElementById('status-filter-btn');
+  if(btn)btn.className='ms-filter-btn'+(activeStatuses.length?' active':'');
+}
+
+// Close filter dropdown when clicking outside
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('status-dropdown');
+  const wrap=document.getElementById('status-filter-wrap');
+  if(dd&&dd.classList.contains('open')&&!wrap.contains(e.target)){
+    dd.classList.remove('open');
+  }
+});
+
+// ═══════════════════════════════════════
+// TOAST NOTIFICATION
+// ═══════════════════════════════════════
+let toastTimer=null;
+function showToast(msg,duration=2500){
+  const t=document.getElementById('toast');
+  if(!t)return;
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),duration);
+}
+
 function filterLog(field,val){
   if(field==='pri'){document.getElementById('lf-stat').value='Open';renderLog()}
   else if(field==='overdue'){document.getElementById('lf-stat').value='Open';renderLog()}
@@ -1495,6 +1599,7 @@ function p2log(id){
   sv2(SK.log,log);
   sv2(SK.inbox,inbox.filter(x=>x.id!==id));
   renderInbox();renderLog();renderDash();
+  showToast('📋 Saved to Draft Log — press L to review');
 }
 function p2note(id){const inbox=ld(SK.inbox,[]);const item=inbox.find(x=>x.id===id);if(!item)return;document.getElementById('nbody').value=item.text;sv2(SK.inbox,inbox.filter(x=>x.id!==id));renderInbox();openNoteModal()}
 function dismissInbox(id){sv2(SK.inbox,ld(SK.inbox,[]).filter(x=>x.id!==id));renderInbox()}
@@ -1787,11 +1892,11 @@ function delProp(){if(!confirm('Delete this property? This will not delete its l
 function renderLog(){
   const log=ld(SK.log,[]);
   const today=new Date().toISOString().split('T')[0];
-  const fs=document.getElementById('lf-stat').value;
+  const activeStatuses=getActiveStatuses();
   const fc=document.getElementById('lf-cat').value;
   const fp=document.getElementById('lf-prop').value;
   let filtered=log.filter(e=>{
-    if(fs&&e.stat!==fs)return false;
+    if(activeStatuses.length&&!activeStatuses.includes(e.stat))return false;
     if(fc&&e.cat!==fc)return false;
     if(fp&&e.code!==fp)return false;
     return true;
@@ -1835,7 +1940,7 @@ function ctxDo(a){
   else if(a==='del'){if(!confirm('Delete?'))return;sv2(SK.log,log.filter(x=>x.id!==ctxLogId));renderLog();renderDash();if(activePropId)renderPropDetail(activePropId,activePropTab);return}
   sv2(SK.log,log);renderLog();renderDash();if(activePropId)renderPropDetail(activePropId,activePropTab);
 }
-function clearLogFilters(){document.getElementById('lf-stat').value='Open';document.getElementById('lf-cat').value='';document.getElementById('lf-prop').value='';renderLog()}
+function clearLogFilters(){resetStatusFilter();document.getElementById('lf-cat').value='';document.getElementById('lf-prop').value='';renderLog()}
 
 function clearLogForm(){
   const today=new Date().toISOString().split('T')[0];
@@ -2197,7 +2302,7 @@ async function handlePhoto(e){
     document.getElementById('pproc').style.display='block';
     try{
       const b64=ev.target.result.split(',')[1];
-      const resp=await fetch('https://url.us.m.mimecastprotect.com/s/scsWCn5jYYUWQ0xoU9f5SJEoM7?domain=api.anthropic.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type,data:b64}},{type:'text',text:'Transcribe these handwritten notes exactly. Use - for checkbox/bullet items. Keep it clean and readable.'}]}]})});
+      const resp=await fetch('https://url.us.m.mimecastprotect.com/s/TqLkC9rPppiOVqg3uofRSqlrj4?domain=api.anthropic.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:file.type,data:b64}},{type:'text',text:'Transcribe these handwritten notes exactly. Use - for checkbox/bullet items. Keep it clean and readable.'}]}]})});
       const data=await resp.json();
       photoText=data.content?.find(c=>c.type==='text')?.text||'Could not read image.';
       document.getElementById('pproc').style.display='none';document.getElementById('pres').style.display='block';document.getElementById('pres').textContent=photoText;document.getElementById('paddbtn').style.display='block';
@@ -2381,9 +2486,7 @@ function draftFromInbox(){
   sv2(SK.log,log);
   el.value='';
   renderLog();renderDash();
-  // Flash the log nav to indicate it was saved
-  const logBtn=document.querySelectorAll('.nb')[1];
-  if(logBtn){logBtn.style.background='rgba(160,144,224,.4)';setTimeout(()=>logBtn.style.background='',800)}
+  showToast('📋 Saved to Draft — press L to review');
 }
 
 // ═══════════════════════════════════════
