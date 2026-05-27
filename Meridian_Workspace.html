@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Workspace | Goodman Insurance</title>
+<style>
+:root {
+  --bg: #18152a;
+  --surface: #201d32;
+  --card: #272340;
+  --border: #332f50;
+  --accent: #7c6fad;
+  --teal: #4ecdc4;
+  --sage: #7ed4a0;
+  --amber: #ffd060;
+  --rose: #ff8f8f;
+  --text: #e8e4f0;
+  --muted: #9890b8;
+  --oat: #d4cfe8;
+  --flag: #ff6b6b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', 'Segoe UI', sans-serif; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+
+/* HEADER */
+#header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 100; }
+#header .logo { font-size: 17px; font-weight: 700; color: var(--teal); }
+#header .sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+#backup-bar { background: #0f0d1a; border-bottom: 1px solid var(--border); padding: 6px 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+#backup-bar span.lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: var(--muted); text-transform: uppercase; }
+#backup-bar .backup-note { font-size: 10px; color: var(--muted); margin-left: auto; }
+#backup-msg { font-size: 11px; color: var(--sage); display: none; }
+
+/* TABS */
+#tab-bar { display: flex; gap: 2px; padding: 8px 14px 0; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; position: sticky; top: 62px; z-index: 99; }
+.tab-btn { padding: 7px 13px; border-radius: 8px 8px 0 0; border: none; cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap; font-family: inherit; background: transparent; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.12s; }
+.tab-btn.active { background: var(--card); color: var(--teal); border-bottom: 2px solid var(--teal); }
+
+/* BODY */
+#body { padding: 14px; max-width: 960px; margin: 0 auto; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* CARDS */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px; margin-bottom: 10px; }
+.card.flag-rose { border-left: 3px solid var(--rose); }
+.card.flag-amber { border-left: 3px solid var(--amber); }
+.card.flag-sage { border-left: 3px solid var(--sage); }
+.card.flag-teal { border-left: 3px solid var(--teal); }
+
+/* FORMS */
+label.lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 3px; }
+input, textarea, select { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 7px 10px; font-size: 13px; width: 100%; font-family: inherit; outline: none; }
+textarea { resize: vertical; min-height: 70px; }
+.row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; }
+.col { flex: 1; min-width: 110px; }
+.col2 { flex: 2; min-width: 200px; }
+
+/* BUTTONS */
+.btn { padding: 6px 13px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; }
+.btn-teal { background: var(--teal); color: var(--bg); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-danger { background: #3d1f1f; color: var(--rose); border: 1px solid #5a2a2a; }
+.btn-amber { background: #3a2f10; color: var(--amber); border: 1px solid #5a4a20; }
+.btn-sage { background: #1a3028; color: var(--sage); border: 1px solid #2a4a38; }
+.btn-sm { padding: 4px 9px; font-size: 11px; }
+.btn-xs { padding: 3px 7px; font-size: 10px; }
+
+/* PILLS */
+.pill { display: inline-block; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; }
+.pill-teal { background: rgba(78,205,196,.15); color: var(--teal); border: 1px solid rgba(78,205,196,.3); }
+.pill-accent { background: rgba(124,111,173,.15); color: var(--accent); border: 1px solid rgba(124,111,173,.3); }
+.pill-sage { background: rgba(126,212,160,.15); color: var(--sage); border: 1px solid rgba(126,212,160,.3); }
+.pill-amber { background: rgba(255,208,96,.15); color: var(--amber); border: 1px solid rgba(255,208,96,.3); }
+.pill-rose { background: rgba(255,143,143,.15); color: var(--rose); border: 1px solid rgba(255,143,143,.3); }
+.pill-muted { background: rgba(152,144,184,.1); color: var(--muted); border: 1px solid rgba(152,144,184,.2); }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { text-align: left; padding: 5px 8px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; white-space: nowrap; border-bottom: 2px solid var(--border); }
+td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover td { background: rgba(78,205,196,.05); }
+.overflow-x { overflow-x: auto; }
+
+/* SECTION TITLE */
+.sec-title { font-size: 15px; font-weight: 700; color: var(--oat); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.sec-title small { font-size: 11px; color: var(--muted); font-weight: 400; }
+
+/* FLAGS */
+.flag-bar { background: rgba(255,107,107,.12); border: 1px solid rgba(255,107,107,.3); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-size: 12px; color: var(--flag); }
+.flag-info { background: rgba(78,205,196,.12); border: 1px solid rgba(78,205,196,.3); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-size: 12px; color: var(--teal); }
+.flag-accent { background: rgba(124,111,173,.15); border: 1px solid rgba(124,111,173,.3); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-size: 12px; color: var(--oat); }
+
+/* THREAD */
+.thread-msg { border-radius: 7px; padding: 8px 11px; margin-bottom: 5px; }
+.thread-me { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--teal); }
+.thread-other { background: #1a1530; border: 1px solid var(--border); border-left: 3px solid var(--accent); }
+.thread-meta { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+.thread-text { font-size: 12px; }
+
+/* MODAL */
+#modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+#modal-overlay.open { display: flex; }
+#modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 820px; max-height: 92vh; overflow: hidden; display: flex; flex-direction: column; }
+#modal-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+#modal-flags { padding: 6px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: none; }
+#modal-tabs { display: flex; gap: 2px; padding: 6px 12px 0; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; }
+.modal-tab { padding: 6px 12px; border-radius: 8px 8px 0 0; border: none; cursor: pointer; font-size: 11px; font-weight: 600; white-space: nowrap; font-family: inherit; background: transparent; color: var(--muted); border-bottom: 2px solid transparent; }
+.modal-tab.active { background: var(--bg); color: var(--teal); border-bottom: 2px solid var(--teal); }
+#modal-body { flex: 1; overflow-y: auto; padding: 14px 16px; }
+.modal-section { display: none; }
+.modal-section.active { display: block; }
+
+/* CHECKLIST */
+.checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.checklist-item.done span { color: var(--muted); text-decoration: line-through; }
+.checklist-item input[type=checkbox] { margin-top: 2px; cursor: pointer; flex-shrink: 0; }
+
+/* FILTER BARS */
+.filter-bar { display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap; align-items: center; }
+.filter-label { font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; margin-right: 4px; white-space: nowrap; }
+
+/* SEARCH */
+.search-box { display: flex; gap: 8px; margin-bottom: 14px; }
+.search-box input { flex: 1; }
+
+/* EMPTY STATE */
+.empty { padding: 20px; text-align: center; color: var(--muted); font-size: 12px; font-style: italic; }
+
+/* PC RULES */
+.pc-rule { border-left: 3px solid var(--teal); padding: 10px 12px; margin-bottom: 8px; background: rgba(78,205,196,.05); border-radius: 0 8px 8px 0; }
+.pc-rule .rule-title { font-weight: 700; color: var(--teal); font-size: 13px; margin-bottom: 3px; }
+.pc-rule .rule-detail { font-size: 12px; margin-bottom: 3px; }
+.pc-rule .rule-example { font-size: 11px; color: var(--muted); font-style: italic; }
+
+/* UTILS */
+.mt8 { margin-top: 8px; }
+.mt12 { margin-top: 12px; }
+.flex-end { display: flex; justify-content: flex-end; }
+.flex-center { display: flex; align-items: center; gap: 8px; }
+.text-oat { color: var(--oat); }
+.text-muted { color: var(--muted); font-size: 11px; }
+.text-teal { color: var(--teal); }
+.text-rose { color: var(--rose); }
+.text-amber { color: var(--amber); }
+.fw700 { font-weight: 700; }
+.fs13 { font-size: 13px; }
+.fs12 { font-size: 12px; }
+.fs11 { font-size: 11px; }
+.fs10 { font-size: 10px; }
+.divider { border-color: var(--border); margin: 12px 0; }
+.tiv-display { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 10px; }
+.tiv-amount { font-size: 22px; font-weight: 700; color: var(--oat); }
+.excluded-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <div class="logo">Meridian Workspace</div>
+    <div class="sub">Amanda Gardner | Goodman Group | Insurance &amp; Risk Management</div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);text-align:right;">
+    <span id="clock"></span>
+  </div>
+</div>
+
+<div id="backup-bar">
+  <span class="lbl">Data Backup</span>
+  <button class="btn btn-sage btn-sm" onclick="exportBackup()">Export Backup</button>
+  <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-file').click()">Import Backup</button>
+  <input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)">
+  <span id="backup-msg"></span>
+  <span class="backup-note">Data stored in browser localStorage — export regularly</span>
+</div>
+
+<div id="tab-bar">
+  <button class="tab-btn active" data-tab="triage">📧 Email Triage</button>
+  <button class="tab-btn" data-tab="br">🏗 Builders Risk</button>
+  <button class="tab-btn" data-tab="properties">🏢 Properties</button>
+  <button class="tab-btn" data-tab="acq">🔑 Acquisitions</button>
+  <button class="tab-btn" data-tab="contracts">📄 Contracts</button>
+  <button class="tab-btn" data-tab="guidance">📚 Guidance Lib</button>
+  <button class="tab-btn" data-tab="riskeng">🔬 Risk Eng</button>
+  <button class="tab-btn" data-tab="legal">⚖ Legal/LOC</button>
+  <button class="tab-btn" data-tab="admin">🌍 MS/SSST</button>
+  <button class="tab-btn" data-tab="search">🔍 Search</button>
+</div>
+
+<div id="body">
+
+<!-- ═══════════════════════════════════════════ TRIAGE ═══ -->
+<div id="sec-triage" class="section active">
+  <div class="sec-title">Email Triage <small>Stream of consciousness capture</small></div>
+  <div class="card">
+    <label class="lbl">Stream dump (voice or type)</label>
+    <textarea id="triage-raw" rows="3" placeholder="Robert emailed about LVW limits... Swiss Re wants SOV by Friday... so and so needs this..."></textarea>
+    <div class="row mt8">
+      <div class="col2"><label class="lbl">Summary / Action</label><input id="triage-summary" placeholder="What needs to happen?"></div>
+    </div>
+    <div class="row">
+      <div class="col"><label class="lbl">Property</label><select id="triage-property"></select></div>
+      <div class="col"><label class="lbl">Type</label><select id="triage-type"></select></div>
+      <div class="col"><label class="lbl">Topic</label><select id="triage-topic"></select></div>
+    </div>
+    <div class="row">
+      <div class="col"><label class="lbl">Urgency</label><select id="triage-urgency"></select></div>
+      <div class="col"><label class="lbl">Ball in Court</label><select id="triage-ball"></select></div>
+      <div class="col"><label class="lbl">Requested By</label><input id="triage-reqby" placeholder="Who asked?"></div>
+    </div>
+    <div class="flex-end mt8"><button class="btn btn-teal" onclick="triageCapture()">+ Capture</button></div>
+  </div>
+  <div class="filter-bar">
+    <input id="triage-search" placeholder="Search..." style="flex:1;min-width:140px;max-width:300px" oninput="renderTriage()">
+    <span id="triage-filters"></span>
+  </div>
+  <div id="triage-count" class="text-muted mb8"></div>
+  <div id="triage-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════ BUILDERS RISK ═══ -->
+<div id="sec-br" class="section">
+  <div class="sec-title">Builders Risk <small>WIP view — all active projects</small></div>
+  <div class="row">
+    <input id="br-search" placeholder="Search property, project, GC, category..." style="flex:1;min-width:200px" oninput="renderBR()">
+    <button class="btn btn-primary" onclick="brNew()">+ New BR Project</button>
+  </div>
+  <div class="filter-bar mt8">
+    <span class="filter-label">Category:</span>
+    <span id="br-cat-filters"></span>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">Stage:</span>
+    <span id="br-stage-filters"></span>
+  </div>
+  <div class="overflow-x mt8">
+    <table id="br-table">
+      <thead><tr>
+        <th>Property</th><th>Project</th><th>Category</th><th>Stage</th>
+        <th>GC</th><th>Start</th><th>Completion</th><th>TIV</th>
+        <th>Ball</th><th>Urgency</th><th>Flags</th><th></th>
+      </tr></thead>
+      <tbody id="br-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PROPERTIES ═══ -->
+<div id="sec-properties" class="section">
+  <div class="sec-title">Properties <small>Full life story per property</small></div>
+  <div class="row">
+    <input id="prop-search" placeholder="Search..." style="flex:1;min-width:150px" oninput="renderProps()">
+    <span id="prop-stage-filters"></span>
+    <button class="btn btn-primary" onclick="propNew()">+ New Property</button>
+  </div>
+  <div id="prop-list" class="mt8"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════ GENERIC SECTIONS ═══ -->
+<div id="sec-acq" class="section"></div>
+<div id="sec-contracts" class="section"></div>
+<div id="sec-guidance" class="section"></div>
+<div id="sec-riskeng" class="section"></div>
+<div id="sec-legal" class="section"></div>
+<div id="sec-admin" class="section"></div>
+
+<!-- ═══════════════════════════════════════════ SEARCH ═══ -->
+<div id="sec-search" class="section">
+  <div class="sec-title">Search Everything</div>
+  <div class="search-box">
+    <input id="search-q" placeholder="Search across all workspaces — property, topic, person, keyword..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button class="btn btn-teal" onclick="doSearch()">Search</button>
+  </div>
+  <div id="search-results"></div>
+</div>
+
+</div><!-- end body -->
+
+<!-- ═══════════════════════════════════════════ BR MODAL ═══ -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal-box">
+    <div id="modal-header">
+      <div>
+        <div class="fw700 text-oat fs16" id="modal-title">BR Project</div>
+        <div class="fs11 text-muted mt4" id="modal-subtitle"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>
+    </div>
+    <div id="modal-flags"></div>
+    <div id="modal-tabs">
+      <button class="modal-tab active" data-mtab="overview">Overview</button>
+      <button class="modal-tab" data-mtab="costs">HC/SC/TIV</button>
+      <button class="modal-tab" data-mtab="docs">Documents</button>
+      <button class="modal-tab" data-mtab="policy">Policy</button>
+      <button class="modal-tab" data-mtab="questions">Open Items</button>
+      <button class="modal-tab" data-mtab="dates">Date History</button>
+      <button class="modal-tab" data-mtab="checklist">Placement Guide</button>
+      <button class="modal-tab" data-mtab="pcform">PC Form</button>
+      <button class="modal-tab" data-mtab="lessons">Lessons Learned</button>
+      <button class="modal-tab" data-mtab="thread">Full Thread</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════ CONSTANTS ════════════
+const PROPS_LIST = ["LAX01","LAX02","LAX03","FON B6","CYP B3","San Jose","LVW","Jersey City","Bellwether","ADMIN","Legal","MS","SSST"];
+const BALL_LIST = ["Me","Robert (Marsh)","Veronica (Marsh)","Israel (Marsh)","Swiss Re","Legal","Tenant","SSST","Accounting","GC/Contractor","Other"];
+const TOPICS_LIST = ["Limits","Indemnity","Waiver of Subrogation","Additional Insured","COI","Premium","SOV","LOC","Builders Risk","Policy Renewal","Risk Engineering","Lease Insurance Req","Claim","Entity","Modern Slavery","SSST","Hard Costs","Soft Costs","TIV","PC Form","General"];
+const BLDG_TYPES = ["Industrial","Data Center","Office","Mixed Use","Development","Other"];
+const URGENCY_LIST = ["Now","Soon","Later","FYI"];
+const TRIAGE_TYPES = ["Email","BR","Acquisition","Contract","Legal","MS","SSST","Admin","SOV","Risk Eng","LOC","Other"];
+const TRIAGE_STATUS = ["Pending","In Progress","Waiting","Complete"];
+const BR_STAGES = ["Pre-Submission","Submitted to Market","Quoted","Bound","Under Construction","Practical Completion","Closed Out"];
+const BR_CATEGORIES = ["Ground-Up Construction","Tenant Improvements","Cap Ex / Fit-Out","Solar & Specialty","Early Works","Pre-Dev / Demo"];
+const BR_URGENCY_LEVELS = ["Active","In Progress","Pending","Monitor","ACTION REQUIRED","N/A"];
+const LIFECYCLE = ["Acquisition","Builders Risk","Stabilized"];
+const STATUS_LIST = ["Pending","In Progress","Waiting","Complete"];
+const PARTNERSHIPS = ["Balance Sheet","Norges","Aware","GMG","TBD","Other"];
+
+const BR_CHECKLIST = [
+  {id:"c1",text:"BRQ completed and submitted to Marsh"},
+  {id:"c2",text:"Project budget / feasibility schedule received"},
+  {id:"c3",text:"Hard costs: Building shell at 100%, Infrastructure at 10%"},
+  {id:"c4",text:"Soft costs: A&E at 20%, Permits at 35%, Legal at 20%, Insurance premium at 75%"},
+  {id:"c5",text:"Environmental / Phase I EXCLUDED (sunk cost)"},
+  {id:"c6",text:"Marketing EXCLUDED (DSU item only)"},
+  {id:"c7",text:"Contingency noted: 50% at feasibility, 100% at GMP"},
+  {id:"c8",text:"Tenant status confirmed — DSU excluded if no tenant"},
+  {id:"c9",text:"TI confirmed — include at 100% only if tenant signed"},
+  {id:"c10",text:"TIV confirmed with Israel (Marsh) before binding"},
+  {id:"c11",text:"Start date and completion date confirmed with GC"},
+  {id:"c12",text:"Policy received and reviewed against BRQ"},
+  {id:"c13",text:"Policy filed in policy files"},
+  {id:"c14",text:"Endorsements tracked (date changes logged)"},
+  {id:"c15",text:"PC form completed — include everything Goodman owns"},
+  {id:"c16",text:"SOV updated at practical completion for carrier reporting"}
+];
+
+const PC_RULES = [
+  {rule:"Include everything Goodman OWNS",detail:"Ownership = include. The test is not likelihood of rebuild.",example:"Storm drain transferred to city = EXCLUDE. Retained by Goodman = INCLUDE. (Marsh, May 2026)"},
+  {rule:"Infrastructure moves to 100% at PC",detail:"During construction it was 10%. At practical completion the full installed value is at risk.",example:"On-site paving, underground utilities, detention ponds = 100% at PC."},
+  {rule:"Exclude land always",detail:"Land is never insurable under BR or permanent property policy.",example:"Land purchase and closing costs = $0 on PC form."},
+  {rule:"TI at 100% if tenant signed",detail:"Once TI scope is defined and work begins, include at full installed value.",example:"No tenant signed at PC = TI is $0."}
+];
+
+const SEED_GUIDANCE = [
+  {id:"sg1",at:new Date("2026-05-07").toISOString(),topic:"PC Form",buildingType:"Industrial",property:"General",question:"What to include on the Practical Completion form — ownership test",response:"Include everything Goodman OWNS at practical completion. The test is ownership, not likelihood of rebuild.\n\nIf Goodman transferred ownership to the city = EXCLUDE.\nIf Goodman still owns it = INCLUDE.\n\nAt PC, infrastructure moves from 10% (construction risk) to 100% (full installed value at risk).\nLand is NEVER included regardless of ownership.",source:"Marsh broker discussion, May 2026 (Robert Boniface / Veronica Osborne)",examples:[{id:"se1",text:"Storm drain at LHV West — ownership transferred to city = EXCLUDED. Goodman-retained retention pond = INCLUDED.",at:new Date("2026-05-07").toISOString()}]},
+  {id:"sg2",at:new Date("2026-05-07").toISOString(),topic:"Hard Costs",buildingType:"Industrial",property:"General",question:"BR TIV: What percentage of infrastructure to include during construction?",response:"Infrastructure at 10% during construction. At any given moment only a fraction of total installed infrastructure value is simultaneously exposed to loss.\n\nCovers: on-site grading, underground utilities, asphalt paving, parking, site lighting, retention/detention ponds. Off-site: road improvements, utility line extensions.\n\nAt Practical Completion: move to 100%.",source:"Marsh TIV Analysis / Moving Forward methodology",examples:[]},
+  {id:"sg3",at:new Date("2026-05-07").toISOString(),topic:"Soft Costs",buildingType:"Industrial",property:"General",question:"Which soft costs to include in BR TIV and at what percentage?",response:"A&E: 20% (only portion that re-incurs if loss occurs)\nPermits & Fees: 35%\nLegal: 20%\nInsurance Premium: 75%\nProperty Taxes: 100% (DSU item)\n\nALWAYS EXCLUDE: Environmental/Phase I (sunk cost), Marketing (DSU only), Holding costs, Land.",source:"Marsh TIV Analysis",examples:[]}
+];
+
+const BR_SEED = [
+  {id:"br_cyp_b3",property:"CYP B3",projectName:"GCC Cypress B3",category:"Ground-Up Construction",stage:"Bound",gc:"Fullmer Construction",buildingType:"Industrial",sqft:"",carrier:"Aspen",policyEff:"2026-04-06",policyExp:"2027-01-31",startDate:"2026-04-06",completionDate:"2027-01-31",ball:"Me",tenantSigned:"No",urgencyLevel:"Active",contractType:"Owner-Contractor (GMP)",contractNum:"54564",contractStatus:"Executed",partnership:"Balance Sheet",eqRequired:"Decision Pending",floodRequired:"TBD",overview:"Ground-up construction. Contract 54564 Executed. EQ decision outstanding: V1 no EQ ~$12,489 prem OR V2 $1M EQ sublimit ~$70,437 prem (add. ~$57,948). Balance sheet asset = EQ discretionary. Alan Cockburn consulted.",policyNotes:"Policy reviewed vs BRQ. Filed. EQ decision pending.",policyReceived:true,reviewedVsBRQ:true,policyFiled:true,questions:[{id:"q_cyp1",q:"EQ decision: V1 (no EQ, $12,489) or V2 ($1M EQ sublimit, $70,437)?",answer:"",status:"Open",ball:"Me",at:new Date().toISOString()}],docs:[{id:"d_cyp1",name:"BR Policy - Aspen",type:"Policy",at:new Date().toISOString()},{id:"d_cyp2",name:"BRQ Cypress B3",type:"Submitted",at:new Date().toISOString()}],checklist:{c12:true,c13:true},thread:[],dateHistory:[]},
+  {id:"br_lvw_b1",property:"LVW",projectName:"GLC Lehigh Valley West - B1 Arndt",category:"Ground-Up Construction",stage:"Pre-Submission",gc:"R.S. Mowery & Sons",buildingType:"Industrial",sqft:"560970",carrier:"",startDate:"2026-05-31",completionDate:"2027-11-30",ball:"Robert (Marsh)",tenantSigned:"No",urgencyLevel:"Pending",contractType:"Design-Build",contractNum:"TBD",contractStatus:"Draft",partnership:"Norges",eqRequired:"Yes (Norges)",floodRequired:"Yes",shellCost:"23289051",onSiteInfra:"18535433",offSiteInfra:"2793477",directConting:"1200944",tiAmount:"0",hardCostTotal:"51572748",aeCost:"225012",permitsCost:"441843",legalCost:"23544",insPremCost:"170935",taxCost:"339496",softCostTotal:"4278908",archEngSplit:"A&E total ~$1.125M. 20% = $225K in soft costs.",contingencyNote:"Feasibility - 50% contingency. Move to 100% when GMP locked.",overview:"Ground-up B1 Arndt 560,970 sf. Design-Build Mowery. Norges - EQ required. Named insured: GLC Lehigh Valley West LLC. Site: William O'Neill (717) 368-3202. Infrastructure May 2026, vertical Nov 2026. Sable parcel (593 Old Rt 22) acq. expected Jun 12 2026.",lessonsKnow:"Norges = EQ+Flood required. Design-Build = Owner procures BR (Art. 10.3). Mowery E&O $5M now, $17k endorsement for $10M under review. CRITICAL: coverage start date unresolved. TI = $0 until tenant signed.",questions:[{id:"q_lvw1",q:"Coverage start date: May 2026 (infrastructure) vs Nov 2026 (vertical)? Team still gathering info.",answer:"",status:"Open",ball:"Internal Team",at:new Date().toISOString()},{id:"q_lvw2",q:"TI: Feasibility shows $3,926,790 but no tenant signed. Confirm TI = $0 in BR TIV.",answer:"",status:"Open",ball:"Me",at:new Date().toISOString()},{id:"q_lvw3",q:"Formal address for B1 and B2? Both showing 685 Old Rt 22. BK or Bill to advise.",answer:"",status:"Open",ball:"Internal Team",at:new Date().toISOString()},{id:"q_lvw4",q:"Mowery $17k E&O endorsement approved? COI must update to $10M at contract execution.",answer:"",status:"Open",ball:"Internal Team",at:new Date().toISOString()}],docs:[{id:"d_lvwb1a",name:"BRQ B1 Arndt",type:"Submitted",at:new Date().toISOString()},{id:"d_lvwb1b",name:"Building Insurable Values Workbook",type:"Submitted",at:new Date().toISOString()}],checklist:{c1:true},thread:[],dateHistory:[]},
+  {id:"br_lvw_b2",property:"LVW",projectName:"GLC Lehigh Valley West - B2 Sutliff",category:"Ground-Up Construction",stage:"Pre-Submission",gc:"R.S. Mowery & Sons",buildingType:"Industrial",sqft:"714000",carrier:"",startDate:"2026-04-30",completionDate:"2027-10-31",ball:"Robert (Marsh)",tenantSigned:"No",urgencyLevel:"Pending",contractType:"Design-Build",contractNum:"TBD",contractStatus:"Draft",partnership:"Norges",eqRequired:"Yes (Norges)",floodRequired:"Yes",shellCost:"27781530",onSiteInfra:"24386991",offSiteInfra:"3555524",directConting:"1439914",tiAmount:"0",hardCostTotal:"64631902",aeCost:"286394",permitsCost:"554344",legalCost:"28056",insPremCost:"217565",taxCost:"463159",softCostTotal:"5334065",archEngSplit:"A&E total ~$1.43M. 20% = $286K in soft costs.",contingencyNote:"Feasibility - 50% contingency.",overview:"Ground-up B2 Sutliff 714,000 sf. Same Design-Build contract Mowery. Infrastructure Apr 2026, vertical Oct 2026.",questions:[{id:"q_lvwb2_1",q:"Coverage start date B2: infrastructure Apr 2026 vs vertical Oct 2026?",answer:"",status:"Open",ball:"Internal Team",at:new Date().toISOString()},{id:"q_lvwb2_2",q:"TI $4,998,000 in feasibility - confirm $0 in BR TIV until tenant signed.",answer:"",status:"Open",ball:"Me",at:new Date().toISOString()}],docs:[{id:"d_lvwb2a",name:"BRQ B2 Sutliff",type:"Submitted",at:new Date().toISOString()}],checklist:{c1:true},thread:[],dateHistory:[]},
+  {id:"br_jc",property:"Jersey City",projectName:"GLC Jersey City",category:"Ground-Up Construction",stage:"Pre-Submission",gc:"ARCO Design/Build LLC",buildingType:"Industrial",sqft:"304185",carrier:"",startDate:"2026-07-31",completionDate:"2027-07-31",ball:"Robert (Marsh)",tenantSigned:"No",urgencyLevel:"Pending",contractType:"Design-Build",contractNum:"TBD",contractStatus:"Draft",partnership:"Norges",eqRequired:"Yes (Norges)",floodRequired:"Yes",shellCost:"15868744",onSiteInfra:"13068744",offSiteInfra:"0",directConting:"793437",tiAmount:"0",hardCostTotal:"32321949",aeCost:"129645",permitsCost:"348606",legalCost:"33000",insPremCost:"139258",taxCost:"0",softCostTotal:"9456847",archEngSplit:"A&E total ~$648K. 20% = $130K in soft costs.",contingencyNote:"Feasibility - 50%. NJ property taxes $4,461,364 = DSU item ONLY, excluded from BR TIV.",overview:"Ground-up. Design-Build ARCO. NJ Norges - EQ required. Early Works = design only, no BR yet. $5M Pollution exception approved (to $10M at DB Agreement). ARCO redlines returned Apr 3 2026.",questions:[{id:"q_jc1",q:"Property taxes $4,461,364 in pre-dev - confirm EXCLUDED from BR TIV (DSU item only).",answer:"",status:"Open",ball:"Robert (Marsh)",at:new Date().toISOString()},{id:"q_jc2",q:"ARCO insurance redlines - what is still outstanding? $10M Pollution required at DB Agreement.",answer:"",status:"Open",ball:"Robert (Marsh)",at:new Date().toISOString()},{id:"q_jc3",q:"TI $1,825,110 in feasibility - confirm $0 in BR TIV until tenant signed.",answer:"",status:"Open",ball:"Me",at:new Date().toISOString()},{id:"q_jc4",q:"When does vertical construction begin? ARCO Early Works = design only, no BR triggered.",answer:"",status:"Open",ball:"Internal Team",at:new Date().toISOString()}],docs:[{id:"d_jc1",name:"BRQ Jersey City",type:"Submitted",at:new Date().toISOString()},{id:"d_jc2",name:"Building Insurable Values Workbook",type:"Submitted",at:new Date().toISOString()}],checklist:{c1:true},thread:[],dateHistory:[]},
+  {id:"br_mil",property:"San Jose",projectName:"GIC Milpitas",category:"Ground-Up Construction",stage:"Pre-Submission",gc:"TBD",buildingType:"Industrial",sqft:"",carrier:"",startDate:"2026-10-29",completionDate:"2027-11-11",ball:"Internal Team",tenantSigned:"No",urgencyLevel:"ACTION REQUIRED",contractType:"TBD",partnership:"TBD",eqRequired:"TBD",floodRequired:"TBD",overview:"BR NOT YET PLACED - ACTION REQUIRED. Inception Oct 29 2026 (demo Jun-Oct = contractor-carried risk). Demo contractor: GL + Inland Marine + CPL with Goodman as AI. Awaiting feaso data from Yaron Palfy.",questions:[{id:"q_mil1",q:"ACTION REQUIRED: BR not placed. Awaiting feaso data from Yaron Palfy / NorCal team.",answer:"",status:"Open",ball:"Internal Team",at:new Date().toISOString()},{id:"q_mil2",q:"Demo contractor (Jun-Oct 2026): GL + Inland Marine + CPL confirmed with Goodman as AI?",answer:"",status:"Open",ball:"SSST",at:new Date().toISOString()}],docs:[],checklist:{},thread:[],dateHistory:[]},
+  {id:"br_fon_b6",property:"FON B6",projectName:"GLC Fontana III B6",category:"Ground-Up Construction",stage:"Submitted to Market",gc:"Oltmans Construction",buildingType:"Industrial",sqft:"",carrier:"TBD",policyEff:"2026-04-30",policyExp:"2027-02-28",startDate:"2026-02-01",completionDate:"2027-02-28",ball:"Robert (Marsh)",tenantSigned:"No",urgencyLevel:"In Progress",contractType:"Owner-Contractor",contractNum:"54312",contractStatus:"Executed",partnership:"Norges",eqRequired:"Yes (Norges)",floodRequired:"Yes",overview:"Contract 54312 Executed. Norges - EQ required. Line-item budget, schedule and geotech requested Feb 25 2026.",questions:[{id:"q_fon1",q:"Line-item budget, schedule and geotech received from team?",answer:"",status:"Open",ball:"Internal Team",at:new Date().toISOString()}],docs:[],checklist:{},thread:[],dateHistory:[]},
+  {id:"br_lax01",property:"LAX01",projectName:"GIC LAX01 / Soto Data Center",category:"Cap Ex / Fit-Out",stage:"Under Construction",gc:"Whiting-Turner",buildingType:"Data Center",sqft:"",carrier:"Starr (25%) / Sompo (20%) + co-insurers",policyNum:"SLSTCON12711325 / ECR10015617200",policyEff:"2025-01-01",policyExp:"2027-12-31",startDate:"2025-01-01",completionDate:"2027-10-25",ball:"Me",tenantSigned:"No",urgencyLevel:"Active",contractType:"Owner-Contractor",contractNum:"52503",contractStatus:"Executed",partnership:"Aware",eqRequired:"Yes (Aware)",floodRequired:"Yes",policyReceived:true,reviewedVsBRQ:true,policyFiled:true,overview:"Fit-out / Data Center. Contract 52503. Aware - EQ required. OCIP NOT used (BR always separate). ~0.60% premium. COI on ACORD 28 issued. Virus/bacteria exclusion applies.",docs:[{id:"d_lax1",name:"BR Policy Starr/Sompo",type:"Policy",at:new Date().toISOString()},{id:"d_lax2",name:"ACORD 28 Whiting-Turner",type:"Submitted",at:new Date().toISOString()}],questions:[],checklist:{c12:true,c13:true},thread:[],dateHistory:[]},
+  {id:"br_ver",property:"LAX02",projectName:"GEP Vernon",category:"Ground-Up Construction",stage:"Submitted to Market",gc:"Whiting-Turner",buildingType:"Industrial",sqft:"",carrier:"TBD",startDate:"2026-04-01",completionDate:"",ball:"Robert (Marsh)",tenantSigned:"No",urgencyLevel:"In Progress",contractType:"Owner-Contractor",contractNum:"54497",contractStatus:"Executed",partnership:"Balance Sheet",eqRequired:"Yes (explicit in contract)",floodRequired:"TBD",overview:"Contract 54497 Executed. Balance sheet BUT EQ explicitly required in contract — different from Cypress B3 where EQ is discretionary.",docs:[],questions:[],checklist:{},thread:[],dateHistory:[]},
+  {id:"br_solar",property:"ADMIN",projectName:"Solar - Various Properties",category:"Solar & Specialty",stage:"Pre-Submission",gc:"TBD",buildingType:"Industrial",sqft:"",carrier:"TBD",ball:"Robert (Marsh)",tenantSigned:"No",urgencyLevel:"ACTION REQUIRED",contractType:"TBD",partnership:"Mixed",overview:"Solar PV - various properties. Under Marsh review (Israel acknowledged Aug 25 2025). CRITICAL: (1) Installation period BR? (2) Transition to property policy at operational? (3) Contractor installation floater adequate?",questions:[{id:"q_sol1",q:"Installation period: standalone BR or endorsement?",answer:"",status:"Open",ball:"Robert (Marsh)",at:new Date().toISOString()},{id:"q_sol2",q:"Confirm transition from BR to property policy at operational commencement per site.",answer:"",status:"Open",ball:"Me",at:new Date().toISOString()},{id:"q_sol3",q:"Contractor installation floater adequate for each solar installer?",answer:"",status:"Open",ball:"SSST",at:new Date().toISOString()}],docs:[],checklist:{},thread:[],dateHistory:[]},
+  {id:"br_lb_amz",property:"LAX01",projectName:"GCC Long Beach B1 - Amazon TI",category:"Tenant Improvements",stage:"Under Construction",gc:"Amazon GC",buildingType:"Industrial",sqft:"",carrier:"Amazon (tenant)",startDate:"2026-01-01",completionDate:"",ball:"SSST",tenantSigned:"Yes",tenantName:"Amazon.com Services",urgencyLevel:"Monitor",contractType:"Lease / Work Letter",overview:"Tenant improvement - Amazon carries BR. Goodman + lender as loss payees. EQ required. Lease executed. COI/evidence pending.",questions:[{id:"q_lb1",q:"Amazon BR evidence of coverage - loss payee status and COI received?",answer:"",status:"Open",ball:"SSST",at:new Date().toISOString()}],docs:[],checklist:{},thread:[],dateHistory:[]},
+  {id:"br_lvw_ew",property:"LVW",projectName:"GLC LVW - Mowery Early Works",category:"Early Works",stage:"Pre-Submission",gc:"R.S. Mowery & Sons",buildingType:"Industrial",sqft:"",carrier:"N/A",startDate:"2026-04-01",completionDate:"",ball:"Me",urgencyLevel:"N/A",contractType:"Early Works / Design-Build",overview:"Tree removal and site clearing only. No BR triggered. BR required once vertical commences. CGL $2M/$4M, Umbrella $10M, E&O $10M (currently $5M + $17k endorsement). COI pending.",questions:[{id:"q_lvwew1",q:"Mowery COI - confirm correct limits before tree removal begins.",answer:"",status:"Open",ball:"SSST",at:new Date().toISOString()}],docs:[],checklist:{},thread:[],dateHistory:[]},
+  {id:"br_jc_ew",property:"Jersey City",projectName:"GLC Jersey City - ARCO Early Works",category:"Early Works",stage:"Pre-Submission",gc:"ARCO Design/Build LLC",buildingType:"Industrial",sqft:"",carrier:"N/A",startDate:"2026-04-01",completionDate:"",ball:"Me",urgencyLevel:"N/A",contractType:"Early Works Authorization",overview:"Design only. No BR - professional services. CGL $10M, Pollution $5M exception approved by Amanda (to $10M at DB Agreement). SSST re-sent COI request.",questions:[{id:"q_jcew1",q:"ARCO COI - $5M Pollution now, $10M required at DB Agreement execution.",answer:"Exception approved by Amanda Gardner.",status:"Open",ball:"SSST",at:new Date().toISOString()}],docs:[],checklist:{},thread:[],dateHistory:[]}
+];
+
+// ════════════════════════════════════════ STORAGE ════════════
+const SK = {
+  triage:"mws_triage", br:"mws_br_v2", props:"mws_properties",
+  acq:"mws_acq", contracts:"mws_contracts", guidance:"mws_guidance_v2",
+  riskeng:"mws_riskeng", legal:"mws_legal", admin:"mws_admin"
+};
+function load(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
+  catch { return def; }
+}
+function save(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function now() { return new Date().toISOString(); }
+function fmtDate(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-US", {month:"short",day:"numeric",year:"numeric",hour:"2-digit",minute:"2-digit"});
+}
+function fmtShort(iso) {
+  if (!iso) return "--";
+  return new Date(iso).toLocaleDateString("en-US", {month:"short",day:"numeric",year:"numeric"});
+}
+function daysUntil(d) {
+  if (!d) return null;
+  return Math.ceil((new Date(d) - new Date()) / 86400000);
+}
+function fmtMoney(n) {
+  const v = parseFloat(String(n||"0").replace(/,/g,""));
+  if (!v || isNaN(v)) return "--";
+  return "$" + v.toLocaleString("en-US",{maximumFractionDigits:0});
+}
+function parseMoney(s) { return parseFloat(String(s||"0").replace(/,/g,"")) || 0; }
+
+// ════════════════════════════════════════ HELPERS ════════════
+function el(id) { return document.getElementById(id); }
+function makeOpts(arr, sel) {
+  return arr.map(o => "<option" + (o===sel?" selected":"") + ">" + esc(o) + "</option>").join("");
+}
+function esc(s) {
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function pill(text, cls) { return "<span class='pill " + cls + "'>" + esc(text) + "</span>"; }
+function urgencyPill(u) {
+  const m = {Now:"pill-rose",Soon:"pill-amber",Later:"pill-sage",FYI:"pill-muted"};
+  return pill(u, m[u]||"pill-muted");
+}
+function statusPill(s) {
+  const m = {Complete:"pill-sage",Bound:"pill-sage","Closed Out":"pill-sage",Waiting:"pill-amber","Pending Carrier":"pill-amber","In Progress":"pill-teal",Active:"pill-teal","Under Construction":"pill-teal"};
+  return pill(s, m[s]||"pill-muted");
+}
+function brUrgencyPill(u) {
+  const m = {"ACTION REQUIRED":"pill-rose",Active:"pill-sage","In Progress":"pill-teal",Monitor:"pill-amber",Pending:"pill-muted","N/A":"pill-muted"};
+  return pill(u, m[u]||"pill-muted");
+}
+function selEl(opts, val, onchange, id) {
+  return "<select id='" + id + "' onchange='" + onchange + "'>" + makeOpts(opts, val) + "</select>";
+}
+
+// ════════════════════════════════════════ BACKUP ════════════
+function exportBackup() {
+  const backup = {exportedAt:now(), version:"2.0", data:{}};
+  Object.entries(SK).forEach(([k,key]) => { backup.data[key] = load(key, []); });
+  const blob = new Blob([JSON.stringify(backup,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "MeridianWorkspace_Backup_" + new Date().toISOString().slice(0,10) + ".json";
+  a.click();
+  URL.revokeObjectURL(url);
+  const m = el("backup-msg");
+  m.style.display = "inline";
+  m.textContent = "Backup downloaded at " + new Date().toLocaleTimeString();
+  setTimeout(() => { m.style.display="none"; }, 4000);
+}
+function importBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const b = JSON.parse(e.target.result);
+      if (!b.data) { alert("Invalid backup file."); return; }
+      if (!confirm("Replace all current data with backup from " + (b.exportedAt ? new Date(b.exportedAt).toLocaleDateString() : "unknown") + "?")) return;
+      Object.entries(b.data).forEach(([k,v]) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} });
+      alert("Backup restored. Page will reload.");
+      location.reload();
+    } catch { alert("Could not read backup file."); }
+  };
+  reader.readAsText(file);
+  input.value = "";
+}
+
+// ════════════════════════════════════════ TABS ════════════
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    btn.classList.add("active");
+    const sec = el("sec-" + btn.dataset.tab);
+    if (sec) sec.classList.add("active");
+    renderSection(btn.dataset.tab);
+  });
+});
+
+function renderSection(tab) {
+  const fns = {triage:renderTriage, br:renderBR, properties:renderProps, acq:()=>renderGeneric("acq"), contracts:()=>renderGeneric("contracts"), guidance:renderGuidance, riskeng:()=>renderGeneric("riskeng"), legal:()=>renderGeneric("legal"), admin:()=>renderGeneric("admin")};
+  if (fns[tab]) fns[tab]();
+}
+
+// ════════════════════════════════════════ POPULATE DROPDOWNS ════════════
+function populateDropdown(id, arr, blank) {
+  const s = el(id);
+  if (!s) return;
+  s.innerHTML = (blank ? "<option value=''>-- " + blank + " --</option>" : "") + arr.map(o => "<option>" + esc(o) + "</option>").join("");
+}
+function initDropdowns() {
+  populateDropdown("triage-property", PROPS_LIST, "Property");
+  populateDropdown("triage-type", TRIAGE_TYPES, "Type");
+  populateDropdown("triage-topic", TOPICS_LIST, "Topic");
+  populateDropdown("triage-urgency", URGENCY_LIST, "Urgency");
+  populateDropdown("triage-ball", BALL_LIST, "Ball in Court");
+
+  // Triage filters
+  const filters = ["All","Pending","Waiting","Complete","Now","Soon","BR","Acquisition"];
+  let state = "All";
+  el("triage-filters").innerHTML = filters.map(f =>
+    "<button class='btn btn-ghost btn-xs' data-f='" + f + "' onclick='triageFilter(\"" + f + "\")'>" + f + "</button>"
+  ).join(" ");
+
+  // BR category filters
+  el("br-cat-filters").innerHTML = ["All",...BR_CATEGORIES].map(c =>
+    "<button class='btn btn-ghost btn-xs' data-brc='" + c + "' onclick='brCatFilter(\"" + esc(c) + "\")'>" + c + "</button>"
+  ).join(" ");
+  el("br-stage-filters").innerHTML = ["All",...BR_STAGES].map(s =>
+    "<button class='btn btn-ghost btn-xs' data-brs='" + s + "' onclick='brStageFilter(\"" + esc(s) + "\")'>" + s + "</button>"
+  ).join(" ");
+
+  // Prop stage filters
+  el("prop-stage-filters").innerHTML = ["All",...LIFECYCLE].map(s =>
+    "<button class='btn btn-ghost btn-xs' data-ps='" + s + "' onclick='propStageFilter(\"" + s + "\")'>" + s + "</button>"
+  ).join(" ");
+
+  markActiveFilter("triage-filters", "All", "[data-f]");
+  markActiveFilter("br-cat-filters", "All", "[data-brc]");
+  markActiveFilter("br-stage-filters", "All", "[data-brs]");
+  markActiveFilter("prop-stage-filters", "All", "[data-ps]");
+}
+function markActiveFilter(containerId, val, selector) {
+  const c = el(containerId);
+  if (!c) return;
+  c.querySelectorAll(selector).forEach(b => {
+    const bv = b.dataset.f || b.dataset.brc || b.dataset.brs || b.dataset.ps;
+    b.className = "btn btn-xs " + (bv === val ? "btn-teal" : "btn-ghost");
+  });
+}
+
+// ════════════════════════════════════════ TRIAGE ════════════
+let triageFilterVal = "All";
+function triageFilter(f) { triageFilterVal = f; markActiveFilter("triage-filters", f, "[data-f]"); renderTriage(); }
+function triageCapture() {
+  const raw = el("triage-raw").value.trim();
+  const summary = el("triage-summary").value.trim() || raw.slice(0,100);
+  if (!summary && !raw) return;
+  const items = load(SK.triage, []);
+  items.unshift({id:uid(), at:now(), raw, summary,
+    property: el("triage-property").value,
+    type: el("triage-type").value,
+    topic: el("triage-topic").value,
+    urgency: el("triage-urgency").value,
+    ball: el("triage-ball").value,
+    requestedBy: el("triage-reqby").value,
+    status: "Pending", thread:[]
+  });
+  save(SK.triage, items);
+  ["triage-raw","triage-summary","triage-reqby"].forEach(id => el(id).value = "");
+  renderTriage();
+}
+function renderTriage() {
+  const items = load(SK.triage, []);
+  const q = (el("triage-search")||{}).value||"";
+  const f = triageFilterVal;
+  const filtered = items.filter(i => {
+    const mf = f==="All" || i.status===f || i.type===f || i.urgency===f;
+    const mq = !q || [i.summary,i.property,i.topic,i.ball,i.requestedBy,i.raw].join(" ").toLowerCase().includes(q.toLowerCase());
+    return mf && mq;
+  });
+  const cnt = el("triage-count");
+  if (cnt) cnt.textContent = filtered.length + " items";
+  const list = el("triage-list");
+  if (!list) return;
+  if (!filtered.length) { list.innerHTML = "<div class='empty'>No items match filters.</div>"; return; }
+  list.innerHTML = filtered.map(i => {
+    const uc = {Now:"flag-rose",Soon:"flag-amber",Later:"flag-sage"}[i.urgency]||"";
+    return "<div class='card " + uc + "' id='tc-" + i.id + "'>" +
+      "<div style='display:flex;justify-content:space-between;gap:8px'>" +
+      "<div style='flex:1'>" +
+      "<div class='fw700 text-oat fs13' style='margin-bottom:4px'>" + esc(i.summary) + "</div>" +
+      "<div style='display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px'>" +
+      (i.property ? pill(i.property,"pill-teal") : "") +
+      (i.type ? pill(i.type,"pill-accent") : "") +
+      (i.urgency ? urgencyPill(i.urgency) : "") +
+      (i.status ? statusPill(i.status) : "") +
+      "</div>" +
+      (i.ball ? "<div class='text-muted'>Ball: " + esc(i.ball) + "</div>" : "") +
+      "<div class='text-muted'>" + fmtDate(i.at) + "</div>" +
+      "</div>" +
+      "<div style='display:flex;gap:4px;align-items:flex-start'>" +
+      "<select class='btn-xs' onchange='triageUpdateStatus(\"" + i.id + "\",this.value)' style='padding:3px 6px;font-size:11px;width:110px'>" + makeOpts(TRIAGE_STATUS, i.status) + "</select>" +
+      "<button class='btn btn-danger btn-xs' onclick='triageDelete(\"" + i.id + "\")'>X</button>" +
+      "</div></div>" +
+      (i.raw ? "<div class='text-muted mt8' style='font-style:italic;border-top:1px solid var(--border);padding-top:6px'>Raw: " + esc(i.raw) + "</div>" : "") +
+      "</div>";
+  }).join("");
+}
+function triageDelete(id) {
+  const items = load(SK.triage, []).filter(i => i.id !== id);
+  save(SK.triage, items);
+  renderTriage();
+}
+function triageUpdateStatus(id, val) {
+  const items = load(SK.triage, []).map(i => i.id===id ? {...i, status:val} : i);
+  save(SK.triage, items);
+}
+
+// ════════════════════════════════════════ BUILDERS RISK ════════════
+let brCatFilterVal = "All", brStageFilterVal = "All";
+let currentBRId = null;
+
+function brCatFilter(f) { brCatFilterVal = f; markActiveFilter("br-cat-filters", f, "[data-brc]"); renderBR(); }
+function brStageFilter(f) { brStageFilterVal = f; markActiveFilter("br-stage-filters", f, "[data-brs]"); renderBR(); }
+
+function brNew() {
+  const projects = load(SK.br, BR_SEED);
+  const p = {id:uid(), property:"", projectName:"", category:"Ground-Up Construction", stage:"Pre-Submission", gc:"", buildingType:"Industrial", sqft:"", carrier:"", ball:"Me", tenantSigned:"No", urgencyLevel:"Pending", contractType:"", contractNum:"", contractStatus:"", partnership:"", eqRequired:"", floodRequired:"", overview:"", thread:[], docs:[], questions:[], checklist:{}, dateHistory:[]};
+  projects.unshift(p);
+  save(SK.br, projects);
+  renderBR();
+  openBRModal(p.id);
+}
+
+function renderBR() {
+  const projects = load(SK.br, BR_SEED);
+  const q = (el("br-search")||{}).value||"";
+  const filtered = projects.filter(p => {
+    const mc = brCatFilterVal==="All" || p.category===brCatFilterVal;
+    const ms = brStageFilterVal==="All" || p.stage===brStageFilterVal;
+    const mq = !q || [p.property,p.projectName,p.gc,p.carrier,p.category,p.urgencyLevel].join(" ").toLowerCase().includes(q.toLowerCase());
+    return mc && ms && mq;
+  });
+  const tbody = el("br-tbody");
+  if (!tbody) return;
+  if (!filtered.length) { tbody.innerHTML = "<tr><td colspan='12' class='empty'>No BR projects match filters.</td></tr>"; return; }
+  tbody.innerHTML = filtered.map(p => {
+    const flags = brFlags(p);
+    const days = daysUntil(p.completionDate);
+    const hc = parseMoney(p.hardCostTotal), sc = parseMoney(p.softCostTotal);
+    const tiv = hc + sc;
+    const dayColor = days !== null && days < 30 ? "color:var(--rose)" : "color:var(--muted)";
+    return "<tr class='clickable' onclick='openBRModal(\"" + p.id + "\")'>" +
+      "<td class='fw700 text-teal'>" + esc(p.property||"--") + "</td>" +
+      "<td class='text-oat'>" + esc(p.projectName||"--") + "</td>" +
+      "<td>" + pill(p.category||"--","pill-muted") + "</td>" +
+      "<td>" + statusPill(p.stage||"--") + "</td>" +
+      "<td style='color:var(--muted)'>" + esc(p.gc||"--") + "</td>" +
+      "<td style='color:var(--muted);white-space:nowrap'>" + (p.startDate?fmtShort(p.startDate):"--") + "</td>" +
+      "<td style='" + dayColor + ";white-space:nowrap'>" + (p.completionDate?fmtShort(p.completionDate):"--") + "</td>" +
+      "<td style='color:var(--oat);white-space:nowrap'>" + (tiv ? fmtMoney(tiv) : "--") + "</td>" +
+      "<td style='color:var(--muted)'>" + esc(p.ball||"--") + "</td>" +
+      "<td>" + brUrgencyPill(p.urgencyLevel||"--") + "</td>" +
+      "<td>" + (flags.length ? "<span class='text-rose fw700'>! " + flags.length + "</span>" : "") + "</td>" +
+      "<td onclick='event.stopPropagation()'><button class='btn btn-danger btn-xs' onclick='brDelete(\"" + p.id + "\")'>X</button></td>" +
+      "</tr>";
+  }).join("");
+}
+
+function brDelete(id) {
+  if (!confirm("Delete this BR project?")) return;
+  save(SK.br, load(SK.br, BR_SEED).filter(p => p.id !== id));
+  renderBR();
+}
+
+function brFlags(p) {
+  const flags = [];
+  const hc = parseMoney(p.hardCostTotal), sc = parseMoney(p.softCostTotal);
+  const tiv = hc + sc;
+  if (tiv > 0) {
+    const pct = (sc/tiv)*100;
+    if (pct > 35) flags.push("Soft costs are " + pct.toFixed(1) + "% of TIV — Marsh guideline is 20-35%. Verify DSU election.");
+    if (pct < 10 && sc > 0) flags.push("Soft costs appear low at " + pct.toFixed(1) + "%. Confirm A&E, permits, legal, insurance premium included.");
+  }
+  if (p.tenantSigned !== "Yes" && p.tiAmount && parseMoney(p.tiAmount) > 0) flags.push("TI entered but no tenant signed — TI should be $0 until tenant confirmed.");
+  if (!p.archEngSplit) flags.push("A&E split not noted — confirm only ~20% included in soft costs.");
+  if (!p.contingencyNote) flags.push("Contingency stage not noted: 50% at feasibility, 100% at GMP.");
+  if (!p.startDate) flags.push("No start date recorded.");
+  if (!p.completionDate) flags.push("No completion date — required for DSU indemnity period.");
+  return flags;
+}
+
+// ════════════════════════════════════════ BR MODAL ════════════
+function openBRModal(id) {
+  currentBRId = id;
+  const p = load(SK.br, BR_SEED).find(x => x.id === id);
+  if (!p) return;
+  el("modal-overlay").classList.add("open");
+  el("modal-title").textContent = (p.property||"BR Project") + (p.projectName ? " — " + p.projectName : "");
+  el("modal-subtitle").innerHTML = brUrgencyPill(p.urgencyLevel||"") + " " + (p.gc ? "GC: " + esc(p.gc) : "") + (p.completionDate ? " | Completion: " + fmtShort(p.completionDate) : "");
+  const flags = brFlags(p);
+  const mf = el("modal-flags");
+  if (flags.length) {
+    mf.style.display = "block";
+    mf.innerHTML = flags.map(f => "<div class='flag-bar'>! " + esc(f) + "</div>").join("");
+  } else { mf.style.display = "none"; }
+  document.querySelectorAll(".modal-tab").forEach(t => t.classList.remove("active"));
+  document.querySelector(".modal-tab[data-mtab='overview']").classList.add("active");
+  renderModalSection("overview", p);
+}
+
+function closeModal() {
+  el("modal-overlay").classList.remove("open");
+  currentBRId = null;
+  renderBR();
+}
+
+document.querySelectorAll(".modal-tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (!currentBRId) return;
+    document.querySelectorAll(".modal-tab").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const p = load(SK.br, BR_SEED).find(x => x.id === currentBRId);
+    if (p) renderModalSection(btn.dataset.mtab, p);
+  });
+});
+
+function brSave(field, val) {
+  if (!currentBRId) return;
+  const projects = load(SK.br, BR_SEED).map(p => p.id===currentBRId ? {...p, [field]:val} : p);
+  save(SK.br, projects);
+}
+function brSaveMulti(updates) {
+  if (!currentBRId) return;
+  const projects = load(SK.br, BR_SEED).map(p => p.id===currentBRId ? {...p, ...updates} : p);
+  save(SK.br, projects);
+}
+
+function field(label, id, val, placeholder, field, type) {
+  type = type || "input";
+  const tag = type === "textarea" ? "textarea" : "input";
+  const extra = type === "textarea" ? " rows='3'" : " type='text'";
+  return "<div><label class='lbl'>" + label + "</label>" +
+    "<" + tag + " id='" + id + "'" + extra + " placeholder='" + esc(placeholder||"") + "' onchange='brSave(\"" + field + "\",this.value)'>" +
+    (type==="textarea" ? esc(val||"") + "</textarea>" : " value='" + esc(val||"") + "'>") + "</div>";
+}
+function ddField(label, id, opts, val, field) {
+  return "<div><label class='lbl'>" + label + "</label><select id='" + id + "' onchange='brSave(\"" + field + "\",this.value)'><option value=''>-- " + label + " --</option>" + makeOpts(opts, val) + "</select></div>";
+}
+
+function renderModalSection(tab, p) {
+  const body = el("modal-body");
+  if (!body) return;
+  if (tab === "overview") {
+    body.innerHTML =
+      "<div class='row'>" + ddField("Property","mo-prop",PROPS_LIST,p.property,"property") + field("Project Name","mo-pname",p.projectName,"e.g. B1 Arndt","projectName") + ddField("Stage","mo-stage",BR_STAGES,p.stage,"stage") + "</div>" +
+      "<div class='row'>" + ddField("Category","mo-cat",BR_CATEGORIES,p.category,"category") + ddField("Urgency Level","mo-urg",BR_URGENCY_LEVELS,p.urgencyLevel,"urgencyLevel") + ddField("Partnership","mo-part",PARTNERSHIPS,p.partnership,"partnership") + "</div>" +
+      "<div class='row'>" + field("Contract Type","mo-ct",p.contractType,"Design-Build, Owner-Contractor...","contractType") + field("Contract No.","mo-cn",p.contractNum,"","contractNum") + field("Contract Status","mo-cs",p.contractStatus,"Executed, Draft...","contractStatus") + "</div>" +
+      "<div class='row'>" + field("GC / Contractor","mo-gc",p.gc,"","gc") + ddField("Building Type","mo-bt",BLDG_TYPES,p.buildingType,"buildingType") + field("Sq Ft","mo-sf",p.sqft,"","sqft") + "</div>" +
+      "<div class='row'>" + ddField("Ball in Court","mo-ball",BALL_LIST,p.ball,"ball") +
+        "<div><label class='lbl'>Tenant Signed?</label><select onchange='brSave(\"tenantSigned\",this.value)'><option value=''>--</option><option" + (p.tenantSigned==="Yes"?" selected":"") + ">Yes</option><option" + (p.tenantSigned==="No"?" selected":"") + ">No</option></select></div>" +
+        (p.tenantSigned==="Yes" ? field("Tenant Name","mo-tn",p.tenantName,"","tenantName") : "<div></div>") + "</div>" +
+        "<div class='row'>" + field("EQ Required?","mo-eq",p.eqRequired,"","eqRequired") + field("Flood Required?","mo-fl",p.floodRequired,"","floodRequired") + "<div></div></div>" +
+      "<div><label class='lbl'>Project Overview</label><textarea rows='4' onchange='brSave(\"overview\",this.value)'>" + esc(p.overview||"") + "</textarea></div>";
+  } else if (tab === "costs") {
+    const hc = parseMoney(p.hardCostTotal), sc = parseMoney(p.softCostTotal);
+    body.innerHTML =
+      "<div class='flag-info'>Marsh Rules: Building Shell = 100% | Infrastructure = 10% | Soft Costs = 20-35% | TI = 100% when tenant signed</div>" +
+      "<div class='fw700 text-oat fs13 mt12' style='margin-bottom:6px'>Hard Costs</div>" +
+      "<div class='row'>" + field("Building / Shell (100%)","mc-sh",p.shellCost,"$","shellCost") + field("On-Site Infrastructure (10%)","mc-on",p.onSiteInfra,"$","onSiteInfra") + field("Off-Site Infrastructure (10%)","mc-off",p.offSiteInfra,"$","offSiteInfra") + "</div>" +
+      "<div class='row'>" + field("TI (100% when tenant signed)","mc-ti",p.tiAmount,"$0 if no tenant","tiAmount") + field("Direct Contingency (50% feaso / 100% GMP)","mc-dc",p.directConting,"$","directConting") + field("Hard Cost Total (BR)","mc-hct",p.hardCostTotal,"$","hardCostTotal") + "</div>" +
+      "<div><label class='lbl'>Contingency Stage Note</label><input onchange='brSave(\"contingencyNote\",this.value)' value='" + esc(p.contingencyNote||"") + "' placeholder='At feasibility — 50%. GMP signed MM/DD — move to 100%.'></div>" +
+      "<div class='fw700 text-oat fs13 mt12' style='margin-bottom:6px'>Soft Costs</div>" +
+      "<div class='row'>" + field("A&E (20%)","mc-ae",p.aeCost,"$","aeCost") + field("Permits & Fees (35%)","mc-per",p.permitsCost,"$","permitsCost") + field("Legal (20%)","mc-leg",p.legalCost,"$","legalCost") + "</div>" +
+      "<div class='row'>" + field("Insurance Premium (75%)","mc-ins",p.insPremCost,"$","insPremCost") + field("Property Taxes (100% DSU)","mc-tax",p.taxCost,"$","taxCost") + field("Soft Cost Total (BR)","mc-sct",p.softCostTotal,"$","softCostTotal") + "</div>" +
+      "<div><label class='lbl'>A&E Split Note</label><input onchange='brSave(\"archEngSplit\",this.value)' value='" + esc(p.archEngSplit||"") + "' placeholder='Total A&E $Xm — 20% = $Xk in soft costs. Confirmed with Israel MM/DD.'></div>" +
+      "<div class='excluded-box mt12'><div class='fw700 text-amber' style='margin-bottom:6px'>Always Excluded from BR TIV</div>" +
+      ["Environmental / Phase I (sunk cost)","Marketing (DSU item only)","Land purchase and closing costs","Holding costs"].map(x => "<div class='text-muted fs12'>x &nbsp;" + x + "</div>").join("") + "</div>" +
+      "<div class='tiv-display'><div class='fw700 text-teal' style='margin-bottom:4px'>Combined BR TIV</div><div class='tiv-amount'>" + (hc+sc ? fmtMoney(hc+sc) : "--") + "</div><div class='text-muted fs11 mt8'>HC: " + fmtMoney(hc) + " &nbsp;|&nbsp; SC: " + fmtMoney(sc) + "</div></div>";
+  } else if (tab === "docs") {
+    const docs = p.docs || [];
+    body.innerHTML = "<div style='display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap'>" +
+      "<button class='btn btn-sage btn-sm' onclick='brAddDoc(\"Submitted\")'>+ Submitted Doc</button>" +
+      "<button class='btn btn-amber btn-sm' onclick='brAddDoc(\"Outstanding\")'>+ Outstanding Doc</button>" +
+      "<button class='btn btn-ghost btn-sm' onclick='brAddDoc(\"Policy\")'>+ Policy Doc</button>" +
+      "<button class='btn btn-ghost btn-sm' onclick='brAddDoc(\"Other\")'>+ Other</button></div>" +
+      ["Submitted","Outstanding","Policy","Other"].map(type => {
+        const dd = docs.filter(d => d.type===type);
+        return "<div style='margin-bottom:14px'>" +
+          "<div class='fw700 fs12' style='color:" + (type==="Submitted"?"var(--sage)":type==="Outstanding"?"var(--amber)":"var(--teal)") + ";margin-bottom:6px'>" + type + " (" + dd.length + ")</div>" +
+          (dd.length ? dd.map(d => "<div class='card' style='padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px'><div><div class='fw700 fs13'>" + esc(d.name) + "</div><div class='text-muted'>" + fmtDate(d.at) + "</div></div><button class='btn btn-danger btn-xs' onclick='brRemoveDoc(\"" + d.id + "\")'>X</button></div>").join("") : "<div class='text-muted fs12' style='font-style:italic'>None yet</div>") +
+          "</div>";
+      }).join("");
+  } else if (tab === "policy") {
+    body.innerHTML =
+      "<div class='row'>" + field("Carrier","mp-car",p.carrier,"Swiss Re, Aspen...","carrier") + field("Policy Number","mp-pnum",p.policyNum,"","policyNum") + "</div>" +
+      "<div class='row'>" + "<div class='col'><label class='lbl'>Effective Date</label><input type='date' value='" + esc(p.policyEff||"") + "' onchange='brSave(\"policyEff\",this.value)'></div>" +
+        "<div class='col'><label class='lbl'>Expiry Date</label><input type='date' value='" + esc(p.policyExp||"") + "' onchange='brSave(\"policyExp\",this.value)'></div>" +
+        field("Annual Premium","mp-prem",p.premium,"$","premium") + "</div>" +
+      "<div><label class='lbl'>Policy Notes</label><textarea rows='3' onchange='brSave(\"policyNotes\",this.value)'>" + esc(p.policyNotes||"") + "</textarea></div>" +
+      "<div style='display:flex;gap:12px;margin-top:10px;flex-wrap:wrap'>" +
+        "<label style='display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer'><input type='checkbox' " + (p.policyReceived?"checked":"") + " onchange='brSave(\"policyReceived\",this.checked)'> Policy Received</label>" +
+        "<label style='display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer'><input type='checkbox' " + (p.reviewedVsBRQ?"checked":"") + " onchange='brSave(\"reviewedVsBRQ\",this.checked)'> Reviewed vs BRQ</label>" +
+        "<label style='display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer'><input type='checkbox' " + (p.policyFiled?"checked":"") + " onchange='brSave(\"policyFiled\",this.checked)'> Filed in Policy Files</label>" +
+      "</div>";
+  } else if (tab === "questions") {
+    const qs = p.questions || [];
+    body.innerHTML = "<button class='btn btn-primary btn-sm' style='margin-bottom:12px' onclick='brAddQuestion()'>+ Add Open Item</button>" +
+      (qs.length ? qs.map((q,i) =>
+        "<div class='card' style='border-left:3px solid " + (q.status==="Resolved"?"var(--sage)":"var(--amber)") + ";margin-bottom:8px'>" +
+        "<div style='display:flex;justify-content:space-between;align-items:flex-start'>" +
+        "<div class='fw700 fs13 text-oat' style='flex:1'>" + esc(q.q) + "</div>" +
+        "<span class='pill " + (q.status==="Resolved"?"pill-sage":"pill-amber") + "'>" + q.status + "</span></div>" +
+        (q.ball ? "<div class='text-muted mt8'>Ball: " + esc(q.ball) + "</div>" : "") +
+        "<div style='margin-top:8px'><label class='lbl'>Answer / Resolution</label><textarea rows='2' onchange='brUpdateQuestion(" + i + ",\"answer\",this.value)'>" + esc(q.answer||"") + "</textarea></div>" +
+        "<div style='display:flex;gap:6px;margin-top:6px'>" +
+        "<select onchange='brUpdateQuestion(" + i + ",\"ball\",this.value)'><option value=''>Ball in Court</option>" + makeOpts(BALL_LIST, q.ball) + "</select>" +
+        "<button class='btn btn-sm " + (q.status==="Resolved"?"btn-ghost":"btn-sage") + "' onclick='brToggleQuestion(" + i + ")'>" + (q.status==="Resolved"?"Reopen":"Resolve") + "</button>" +
+        "</div></div>"
+      ).join("") : "<div class='empty'>No open questions yet.</div>");
+  } else if (tab === "dates") {
+    const hist = p.dateHistory || [];
+    const days = daysUntil(p.completionDate);
+    body.innerHTML =
+      "<div class='flag-info'>All date changes are logged automatically — old value, new value, and reason preserved.</div>" +
+      "<div class='row mt8'>" +
+        "<div class='col'><label class='lbl'>Start Date</label><input type='date' value='" + esc(p.startDate||"") + "' onchange='brChangeDate(\"startDate\",this.value)'></div>" +
+        "<div class='col'><label class='lbl'>Completion Date</label><input type='date' value='" + esc(p.completionDate||"") + "' onchange='brChangeDate(\"completionDate\",this.value)'></div>" +
+      "</div>" +
+      (p.completionDate ? "<div class='fs12' style='color:" + (days!==null&&days<30?"var(--rose)":"var(--muted)") + ";margin-bottom:10px'>" + (days>0?days+" days until completion":"Completion date has passed") + "</div>" : "") +
+      "<div class='fw700 text-oat fs13 mt12' style='margin-bottom:8px'>Date Change History</div>" +
+      (hist.length ? hist.map(h =>
+        "<div class='card' style='padding:10px 12px;margin-bottom:6px'>" +
+        "<div style='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px'>" +
+        pill(h.field==="startDate"?"Start Date":"Completion Date","pill-amber") +
+        "<span class='text-muted'>" + fmtDate(h.at) + " by " + esc(h.by||"Amanda") + "</span></div>" +
+        "<div class='fs12'>" + fmtShort(h.old) + " &rarr; " + fmtShort(h.newVal) + "</div>" +
+        (h.reason ? "<div class='text-muted' style='font-style:italic;margin-top:2px'>Reason: " + esc(h.reason) + "</div>" : "") +
+        "</div>"
+      ).join("") : "<div class='empty'>No date changes recorded yet.</div>");
+  } else if (tab === "checklist") {
+    const chk = p.checklist || {};
+    const done = Object.values(chk).filter(Boolean).length;
+    body.innerHTML = "<div class='text-muted fs12' style='margin-bottom:12px'>Placement checklist based on Marsh methodology. " + done + " / " + BR_CHECKLIST.length + " complete.</div>" +
+      BR_CHECKLIST.map(item =>
+        "<div class='checklist-item" + (chk[item.id]?" done":"") + "'>" +
+        "<input type='checkbox' " + (chk[item.id]?"checked":"") + " onchange='brToggleCheck(\"" + item.id + "\")'>" +
+        "<span class='fs13'>" + esc(item.text) + "</span></div>"
+      ).join("");
+  } else if (tab === "pcform") {
+    body.innerHTML = "<div class='fw700 text-oat fs14' style='margin-bottom:10px'>Practical Completion Form Rules</div>" +
+      PC_RULES.map(r =>
+        "<div class='pc-rule'><div class='rule-title'>" + esc(r.rule) + "</div><div class='rule-detail'>" + esc(r.detail) + "</div><div class='rule-example'>Example: " + esc(r.example) + "</div></div>"
+      ).join("") +
+      "<div class='fw700 text-oat fs13 mt12' style='margin-bottom:8px'>PC Values — This Project</div>" +
+      "<div class='row'>" + field("PC Building Value (100%)","pc-bv",p.pcBuilding,"$","pcBuilding") + field("PC Infrastructure (100% at completion)","pc-inf",p.pcInfra,"$","pcInfra") + "</div>" +
+      "<div class='row'>" + field("PC TI Value","pc-ti",p.pcTI,"$0 if no tenant","pcTI") + field("PC Total","pc-tot",p.pcTotal,"$","pcTotal") + "</div>" +
+      "<div><label class='lbl'>Ownership Notes</label><textarea rows='4' onchange='brSave(\"pcOwnershipNotes\",this.value)'>" + esc(p.pcOwnershipNotes||"") + "</textarea></div>" +
+      "<div class='mt8'><button class='btn btn-primary btn-sm' onclick='brAddPCExample()'>+ Add Ownership Example</button></div>" +
+      "<div id='pc-examples' class='mt8'>" + (p.pcExamples||[]).map((ex,i) => "<div class='card' style='padding:8px 12px;border-left:3px solid var(--amber);margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start'><div class='fs12'>" + esc(ex.text) + "<div class='text-muted'>" + fmtDate(ex.at) + "</div></div><button class='btn btn-danger btn-xs' onclick='brRemovePCExample(" + i + ")'>X</button></div>").join("") + "</div>";
+  } else if (tab === "lessons") {
+    body.innerHTML =
+      "<div class='flag-accent'>Briefing note for future-you. Fill this out at close-out so you can re-onboard quickly after a long gap.</div>" +
+      "<div class='mt12'><label class='lbl'>What to know before starting this type of placement</label><textarea rows='4' onchange='brSave(\"lessonsKnow\",this.value)'>" + esc(p.lessonsKnow||"") + "</textarea></div>" +
+      "<div class='mt8'><label class='lbl'>What worked well</label><textarea rows='3' onchange='brSave(\"lessonsGood\",this.value)'>" + esc(p.lessonsGood||"") + "</textarea></div>" +
+      "<div class='mt8'><label class='lbl'>Watch out for / pain points</label><textarea rows='3' onchange='brSave(\"lessonsBad\",this.value)'>" + esc(p.lessonsBad||"") + "</textarea></div>" +
+      "<div class='mt8'><label class='lbl'>Key coverage decisions made</label><textarea rows='3' onchange='brSave(\"lessonsDecisions\",this.value)'>" + esc(p.lessonsDecisions||"") + "</textarea></div>" +
+      "<button class='btn btn-teal btn-sm mt8' onclick='brSave(\"lessonsUpdated\",new Date().toISOString());alert(\"Marked updated.\")'>Mark Updated</button>" +
+      (p.lessonsUpdated ? "<div class='text-muted mt8'>Last updated: " + fmtDate(p.lessonsUpdated) + "</div>" : "");
+  } else if (tab === "thread") {
+    const thread = p.thread || [];
+    body.innerHTML = "<div class='text-muted fs11' style='margin-bottom:8px'>Full discussion history for this BR project</div>" +
+      thread.map(m => "<div class='thread-msg thread-me'><div class='thread-meta'>" + esc(m.from||"Me") + " — " + fmtDate(m.at) + "</div><div class='thread-text'>" + esc(m.text) + "</div></div>").join("") +
+      "<div style='display:flex;gap:6px;margin-top:6px'><input id='br-thread-input' placeholder='Add note...' style='flex:1' onkeydown='if(event.key===\"Enter\")brAddThread()'><button class='btn btn-ghost btn-sm' onclick='brAddThread()'>Add</button></div>";
+  }
+}
+
+function brAddThread() {
+  const inp = el("br-thread-input");
+  if (!inp || !inp.value.trim()) return;
+  const text = inp.value.trim();
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    return {...p, thread:[...(p.thread||[]), {id:uid(), text, from:"Me", at:now()}]};
+  });
+  save(SK.br, projects);
+  inp.value = "";
+  const p = projects.find(x => x.id === currentBRId);
+  if (p) renderModalSection("thread", p);
+}
+function brAddDoc(type) {
+  const name = prompt("Document name?");
+  if (!name) return;
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    return {...p, docs:[...(p.docs||[]), {id:uid(), name, type, at:now()}]};
+  });
+  save(SK.br, projects);
+  renderModalSection("docs", projects.find(x => x.id === currentBRId));
+}
+function brRemoveDoc(docId) {
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    return {...p, docs:(p.docs||[]).filter(d => d.id !== docId)};
+  });
+  save(SK.br, projects);
+  renderModalSection("docs", projects.find(x => x.id === currentBRId));
+}
+function brAddQuestion() {
+  const q = prompt("Open question?");
+  if (!q) return;
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    return {...p, questions:[...(p.questions||[]), {id:uid(), q, answer:"", status:"Open", ball:"", at:now()}]};
+  });
+  save(SK.br, projects);
+  renderModalSection("questions", projects.find(x => x.id === currentBRId));
+}
+function brUpdateQuestion(i, field, val) {
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    const qs = [...(p.questions||[])];
+    qs[i] = {...qs[i], [field]:val};
+    return {...p, questions:qs};
+  });
+  save(SK.br, projects);
+}
+function brToggleQuestion(i) {
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    const qs = [...(p.questions||[])];
+    qs[i] = {...qs[i], status: qs[i].status==="Resolved"?"Open":"Resolved"};
+    return {...p, questions:qs};
+  });
+  save(SK.br, projects);
+  renderModalSection("questions", projects.find(x => x.id === currentBRId));
+}
+function brToggleCheck(checkId) {
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    const chk = {...(p.checklist||{})};
+    chk[checkId] = !chk[checkId];
+    return {...p, checklist:chk};
+  });
+  save(SK.br, projects);
+}
+function brChangeDate(field, val) {
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    const hist = [...(p.dateHistory||[])];
+    if (p[field] && p[field] !== val) {
+      const reason = prompt("Reason for " + field + " change?") || "No reason given";
+      hist.push({id:uid(), field, old:p[field], newVal:val, reason, at:now(), by:"Amanda"});
+    }
+    return {...p, [field]:val, dateHistory:hist};
+  });
+  save(SK.br, projects);
+}
+function brAddPCExample() {
+  const text = prompt("Add ownership example or precedent?");
+  if (!text) return;
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    return {...p, pcExamples:[...(p.pcExamples||[]), {id:uid(), text, at:now()}]};
+  });
+  save(SK.br, projects);
+  renderModalSection("pcform", projects.find(x => x.id === currentBRId));
+}
+function brRemovePCExample(i) {
+  const projects = load(SK.br, BR_SEED).map(p => {
+    if (p.id !== currentBRId) return p;
+    const ex = [...(p.pcExamples||[])];
+    ex.splice(i,1);
+    return {...p, pcExamples:ex};
+  });
+  save(SK.br, projects);
+  renderModalSection("pcform", projects.find(x => x.id === currentBRId));
+}
+
+// ════════════════════════════════════════ PROPERTIES ════════════
+let propStageFilterVal = "All";
+function propStageFilter(f) { propStageFilterVal = f; markActiveFilter("prop-stage-filters", f, "[data-ps]"); renderProps(); }
+function propNew() {
+  const props = load(SK.props, []);
+  props.unshift({id:uid(), code:"", name:"", stage:"Stabilized", at:now(), notes:[], thread:[], sovYears:[]});
+  save(SK.props, props);
+  renderProps();
+}
+function renderProps() {
+  const props = load(SK.props, []);
+  const q = (el("prop-search")||{}).value||"";
+  const filtered = props.filter(p => {
+    const ms = propStageFilterVal==="All" || p.stage===propStageFilterVal;
+    const mq = !q || [p.code,p.name,p.address,p.buildingType].join(" ").toLowerCase().includes(q.toLowerCase());
+    return ms && mq;
+  });
+  const list = el("prop-list");
+  if (!list) return;
+  if (!filtered.length) { list.innerHTML = "<div class='empty'>No properties. Click + New Property to add.</div>"; return; }
+  const stageColor = {Stabilized:"pill-sage","Builders Risk":"pill-amber",Acquisition:"pill-teal"};
+  list.innerHTML = filtered.map(p =>
+    "<div class='card' style='display:flex;justify-content:space-between;align-items:center;cursor:pointer' onclick='alert(\"Property detail view — coming soon. Use notes field for now.\")'>" +
+    "<div><div style='display:flex;gap:8px;align-items:center;margin-bottom:4px'>" +
+    "<span class='fw700 text-oat fs13'>" + esc(p.code||"(no code)") + "</span>" +
+    "<span class='fs12 text-muted'>" + esc(p.name) + "</span>" +
+    (p.buildingType ? pill(p.buildingType,"pill-accent") : "") + "</div>" +
+    "<div style='display:flex;gap:6px'>" + pill(p.stage||"Unknown", stageColor[p.stage]||"pill-muted") +
+    (p.sqft ? "<span class='text-muted fs11'>" + esc(p.sqft) + " sf</span>" : "") +
+    (p.address ? "<span class='text-muted fs11'>" + esc(p.address) + "</span>" : "") +
+    "</div></div>" +
+    "<button class='btn btn-danger btn-xs' onclick='event.stopPropagation();propDelete(\"" + p.id + "\")'>X</button></div>"
+  ).join("");
+}
+function propDelete(id) {
+  if (!confirm("Delete this property?")) return;
+  save(SK.props, load(SK.props, []).filter(p => p.id !== id));
+  renderProps();
+}
+
+// ════════════════════════════════════════ GUIDANCE LIBRARY ════════════
+let guidanceOpenId = null;
+let guidanceNewEx = {};
+function renderGuidance() {
+  const items = load(SK.guidance, SEED_GUIDANCE);
+  const q = (el("guid-search")||{}).value||"";
+  const filtered = !q ? items : items.filter(i => [i.topic,i.buildingType,i.question,i.response,i.property,i.source].join(" ").toLowerCase().includes(q.toLowerCase()));
+  const sec = el("sec-guidance");
+  if (!sec) return;
+  sec.innerHTML = "<div class='sec-title'>Guidance Library <small>Broker/carrier responses, limit decisions, precedents</small></div>" +
+    "<div class='card'>" +
+    "<div class='row'><div class='col'><label class='lbl'>Topic</label><select id='g-topic'><option value=''>-- Topic --</option>" + makeOpts(TOPICS_LIST,"") + "</select></div><div class='col'><label class='lbl'>Building Type</label><select id='g-bt'><option value=''>-- Building Type --</option>" + makeOpts(BLDG_TYPES,"") + "</select></div><div class='col'><label class='lbl'>Property</label><select id='g-prop'><option value=''>-- Property --</option>" + makeOpts(PROPS_LIST,"") + "</select></div></div>" +
+    "<div><label class='lbl'>Question / Issue</label><textarea id='g-q' rows='2' placeholder='What was the question or provision at issue?'></textarea></div>" +
+    "<div class='mt8'><label class='lbl'>Response / Guidance</label><textarea id='g-resp' rows='3' placeholder='What did Marsh / carrier / internal decide?'></textarea></div>" +
+    "<div class='row mt8'><div class='col2'><label class='lbl'>Source</label><input id='g-src' placeholder='e.g. Robert (Marsh), Swiss Re, internal decision MM/DD/YYYY'></div><div style='align-self:flex-end'><button class='btn btn-teal' onclick='guidanceSave()'>+ Save</button></div></div>" +
+    "</div>" +
+    "<input id='guid-search' placeholder='Search by topic, building type, question, property...' style='margin-bottom:12px;width:100%' oninput='renderGuidance()'>" +
+    filtered.map(i => {
+      const open = guidanceOpenId === i.id;
+      return "<div class='card' style='margin-bottom:8px'>" +
+        "<div style='display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer' onclick='guidanceToggle(\"" + i.id + "\")'>" +
+        "<div><div style='display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px'>" +
+        (i.topic ? pill(i.topic,"pill-teal") : "") + (i.buildingType ? pill(i.buildingType,"pill-accent") : "") + (i.property ? pill(i.property,"pill-sage") : "") +
+        "</div><div class='fw700 text-oat fs13'>" + esc(i.question) + "</div>" +
+        (i.source ? "<div class='text-muted'>Source: " + esc(i.source) + "</div>" : "") + "</div>" +
+        "<span style='color:var(--muted)'>" + (open?"v":">") + "</span></div>" +
+        (open ? "<div style='margin-top:10px;border-top:1px solid var(--border);padding-top:10px'>" +
+          "<div class='lbl'>Guidance / Response</div><div class='fs12' style='line-height:1.7;white-space:pre-wrap;margin-bottom:12px'>" + esc(i.response) + "</div>" +
+          "<div class='fw700 fs12 text-amber' style='margin-bottom:6px'>Real Examples / Precedents</div>" +
+          (i.examples||[]).map(ex => "<div class='card' style='padding:8px 12px;border-left:3px solid var(--amber);margin-bottom:6px;font-size:12px'>" + esc(ex.text) + "<div class='text-muted'>" + fmtDate(ex.at) + "</div></div>").join("") +
+          "<div style='display:flex;gap:6px;margin-top:8px'><input id='gex-" + i.id + "' placeholder='Add example or precedent...' style='flex:1' onkeydown='if(event.key===\"Enter\")guidanceAddEx(\"" + i.id + "\")'><button class='btn btn-amber btn-sm' onclick='guidanceAddEx(\"" + i.id + "\")'>+ Example</button></div>" +
+        "</div>" : "") + "</div>";
+    }).join("");
+}
+function guidanceSave() {
+  const q = (el("g-q")||{}).value||"";
+  if (!q.trim()) return;
+  const items = load(SK.guidance, SEED_GUIDANCE);
+  items.unshift({id:uid(), at:now(), topic:(el("g-topic")||{}).value||"", buildingType:(el("g-bt")||{}).value||"", property:(el("g-prop")||{}).value||"", question:q, response:(el("g-resp")||{}).value||"", source:(el("g-src")||{}).value||"", examples:[]});
+  save(SK.guidance, items);
+  renderGuidance();
+}
+function guidanceToggle(id) { guidanceOpenId = guidanceOpenId===id?null:id; renderGuidance(); }
+function guidanceAddEx(id) {
+  const inp = el("gex-" + id);
+  if (!inp || !inp.value.trim()) return;
+  const items = load(SK.guidance, SEED_GUIDANCE).map(i => i.id===id ? {...i, examples:[...(i.examples||[]), {id:uid(), text:inp.value.trim(), at:now()}]} : i);
+  save(SK.guidance, items);
+  renderGuidance();
+}
+
+// ════════════════════════════════════════ GENERIC TRACKER ════════════
+const GENERIC_CONFIGS = {
+  acq:{ title:"Acquisitions", types:["Due Diligence","LOI","Closing","Post-Close","Other"] },
+  contracts:{ title:"Contract Review", types:["Lease","Vendor Contract","Construction Contract","Service Agreement","LOI","Other"] },
+  riskeng:{ title:"Risk Engineering", types:["Inspection","Report","Follow-Up","Re-Inspection","Carrier Commentary","Other"] },
+  legal:{ title:"Legal / Entities / LOC", types:["Letter of Credit","Notary","Entity Maintenance","Legal Review","Other"] },
+  admin:{ title:"MS / SSST / Admin", types:["Modern Slavery","SSST / COI","Admin","General To-Do","Other"] }
+};
+let genericOpen = {};
+function renderGeneric(key) {
+  const cfg = GENERIC_CONFIGS[key];
+  const sec = el("sec-" + key);
+  if (!sec || !cfg) return;
+  const items = load(SK[key], []);
+  const q = (el(key+"-gsearch")||{}).value||"";
+  const filtered = !q ? items : items.filter(i => [i.summary,i.property,i.type,i.topic,i.ball,i.notes].join(" ").toLowerCase().includes(q.toLowerCase()));
+  sec.innerHTML = "<div class='sec-title'>" + cfg.title + "</div>" +
+    "<div class='card'>" +
+    "<div><label class='lbl'>Summary</label><input id='" + key + "-gsumm' placeholder='What is this?' style='margin-bottom:8px'></div>" +
+    "<div class='row'><div class='col'><label class='lbl'>Property</label><select id='" + key + "-gprop'><option value=''>--</option>" + makeOpts(PROPS_LIST,"") + "</select></div>" +
+    "<div class='col'><label class='lbl'>Type</label><select id='" + key + "-gtype'><option value=''>--</option>" + makeOpts(cfg.types,"") + "</select></div>" +
+    "<div class='col'><label class='lbl'>Topic</label><select id='" + key + "-gtopic'><option value=''>--</option>" + makeOpts(TOPICS_LIST,"") + "</select></div></div>" +
+    "<div class='row'><div class='col'><label class='lbl'>Ball in Court</label><select id='" + key + "-gball'><option value=''>--</option>" + makeOpts(BALL_LIST,"") + "</select></div>" +
+    "<div class='col'><label class='lbl'>Status</label><select id='" + key + "-gstatus'><option value=''>--</option>" + makeOpts(STATUS_LIST,"Pending") + "</select></div>" +
+    "<div class='col'><label class='lbl'>Urgency</label><select id='" + key + "-gurg'><option value=''>--</option>" + makeOpts(URGENCY_LIST,"") + "</select></div></div>" +
+    "<div><label class='lbl'>Notes</label><textarea id='" + key + "-gnotes' rows='2'></textarea></div>" +
+    "<div class='flex-end mt8'><button class='btn btn-teal' onclick='genericAdd(\"" + key + "\")'>+ Add</button></div>" +
+    "</div>" +
+    "<input id='" + key + "-gsearch' placeholder='Search...' style='margin-bottom:10px;width:100%' oninput='renderGeneric(\"" + key + "\")'>" +
+    filtered.map(i => {
+      const open = !!genericOpen[key+i.id];
+      const uc = {Now:"flag-rose",Soon:"flag-amber",Later:"flag-sage"}[i.urgency]||"";
+      return "<div class='card " + uc + "' style='margin-bottom:8px'>" +
+        "<div style='display:flex;justify-content:space-between;cursor:pointer' onclick='genericToggle(\"" + key + "\",\"" + i.id + "\")'>" +
+        "<div><div class='fw700 fs13 text-oat' style='margin-bottom:4px'>" + esc(i.summary) + "</div>" +
+        "<div style='display:flex;gap:4px;flex-wrap:wrap'>" +
+        (i.property?pill(i.property,"pill-teal"):"") + (i.type?pill(i.type,"pill-accent"):"") + (i.status?statusPill(i.status):"") +
+        (i.ball?"<span class='text-muted fs11'>Ball: " + esc(i.ball) + "</span>":"") + "</div></div>" +
+        "<span style='color:var(--muted)'>" + (open?"v":">") + "</span></div>" +
+        (open ? "<div style='margin-top:10px;border-top:1px solid var(--border);padding-top:10px'>" +
+          (i.notes?"<div class='fs12' style='white-space:pre-wrap;margin-bottom:8px'>" + esc(i.notes) + "</div>":"") +
+          (i.thread||[]).map(m => "<div class='thread-msg thread-me'><div class='thread-meta'>" + fmtDate(m.at) + "</div><div class='thread-text'>" + esc(m.text) + "</div></div>").join("") +
+          "<div style='display:flex;gap:6px;margin-top:6px'><input id='gt-" + key + i.id + "' placeholder='Add update...' style='flex:1' onkeydown='if(event.key===\"Enter\")genericAddNote(\"" + key + "\",\"" + i.id + "\")'><button class='btn btn-ghost btn-xs' onclick='genericAddNote(\"" + key + "\",\"" + i.id + "\")'>Add</button></div>" +
+          "<div style='display:flex;gap:6px;margin-top:8px'>" +
+          "<select onchange='genericUpdateField(\"" + key + "\",\"" + i.id + "\",\"status\",this.value)'>" + makeOpts(STATUS_LIST,i.status) + "</select>" +
+          "<select onchange='genericUpdateField(\"" + key + "\",\"" + i.id + "\",\"ball\",this.value)'><option>Ball...</option>" + makeOpts(BALL_LIST,i.ball) + "</select>" +
+          "<button class='btn btn-danger btn-xs' onclick='genericDelete(\"" + key + "\",\"" + i.id + "\")'>Delete</button></div>" +
+        "</div>" : "") + "</div>";
+    }).join("") + (filtered.length===0?"<div class='empty'>No items yet.</div>":"");
+}
+function genericAdd(key) {
+  const cfg = GENERIC_CONFIGS[key];
+  const s = id => (el(key+"-"+id)||{}).value||"";
+  const summary = s("gsumm");
+  if (!summary.trim()) return;
+  const items = load(SK[key], []);
+  items.unshift({id:uid(), at:now(), summary, property:s("gprop"), type:s("gtype"), topic:s("gtopic"), ball:s("gball"), status:s("gstatus")||"Pending", urgency:s("gurg"), notes:s("gnotes"), thread:[]});
+  save(SK[key], items);
+  renderGeneric(key);
+}
+function genericToggle(key, id) { genericOpen[key+id] = !genericOpen[key+id]; renderGeneric(key); }
+function genericAddNote(key, id) {
+  const inp = el("gt-" + key + id);
+  if (!inp || !inp.value.trim()) return;
+  const text = inp.value.trim();
+  const items = load(SK[key], []).map(i => i.id===id ? {...i, thread:[...(i.thread||[]), {id:uid(), text, at:now()}]} : i);
+  save(SK[key], items);
+  inp.value = "";
+  renderGeneric(key);
+}
+function genericUpdateField(key, id, field, val) {
+  save(SK[key], load(SK[key], []).map(i => i.id===id ? {...i, [field]:val} : i));
+}
+function genericDelete(key, id) {
+  if (!confirm("Delete this item?")) return;
+  save(SK[key], load(SK[key], []).filter(i => i.id !== id));
+  renderGeneric(key);
+}
+
+// ════════════════════════════════════════ SEARCH ════════════
+const ALL_KEYS = {
+  [SK.triage]:"Triage", [SK.br]:"Builders Risk", [SK.props]:"Properties",
+  [SK.acq]:"Acquisitions", [SK.contracts]:"Contracts", [SK.guidance]:"Guidance Library",
+  [SK.riskeng]:"Risk Engineering", [SK.legal]:"Legal/LOC", [SK.admin]:"MS/SSST/Admin"
+};
+function doSearch() {
+  const q = (el("search-q")||{}).value||"";
+  if (!q.trim()) return;
+  const lower = q.toLowerCase();
+  const results = [];
+  Object.entries(ALL_KEYS).forEach(([key, label]) => {
+    const defaults = key===SK.br ? BR_SEED : key===SK.guidance ? SEED_GUIDANCE : [];
+    try {
+      const data = load(key, defaults);
+      (Array.isArray(data)?data:[]).forEach(item => {
+        if (JSON.stringify(item).toLowerCase().includes(lower)) results.push({label, item});
+      });
+    } catch {}
+  });
+  const res = el("search-results");
+  if (!results.length) { res.innerHTML = "<div class='empty'>No results found.</div>"; return; }
+  res.innerHTML = "<div class='text-muted fs11' style='margin-bottom:8px'>" + results.length + " results</div>" +
+    results.map(r =>
+      "<div class='card' style='margin-bottom:8px'>" +
+      "<div class='fw700 fs10 text-teal' style='margin-bottom:4px'>" + r.label + "</div>" +
+      "<div class='fw700 fs13 text-oat'>" + esc(r.item.summary||r.item.question||r.item.name||r.item.code||r.item.projectName||"(item)") + "</div>" +
+      "<div style='display:flex;gap:4px;margin-top:4px;flex-wrap:wrap'>" +
+      (r.item.property?pill(r.item.property,"pill-teal"):"") +
+      (r.item.status?statusPill(r.item.status):"") +
+      (r.item.stage?pill(r.item.stage,"pill-muted"):"") +
+      "</div></div>"
+    ).join("");
+}
+
+// ════════════════════════════════════════ CLOCK ════════════
+function updateClock() {
+  const c = el("clock");
+  if (c) c.textContent = new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+}
+
+// ════════════════════════════════════════ INIT ════════════
+document.addEventListener("DOMContentLoaded", () => {
+  initDropdowns();
+  updateClock();
+  setInterval(updateClock, 60000);
+  renderTriage();
+  renderBR();
+});
+</script>
+</body>
+</html>
